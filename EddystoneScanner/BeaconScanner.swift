@@ -6,7 +6,6 @@
 //  Copyright © 2017 Amit Prabhu. All rights reserved.
 //
 
-import UIKit
 import CoreBluetooth
 
 ///
