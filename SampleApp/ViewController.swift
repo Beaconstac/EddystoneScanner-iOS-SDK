@@ -8,6 +8,7 @@
 
 import UIKit
 import EddystoneScanner
+import UserNotifications
 
 class ViewController: UIViewController {
     
@@ -20,6 +21,11 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         scanner.startScanning()
         scanner.delegate = self
+        
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+            // Enable or disable features based on authorization.
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -47,6 +53,22 @@ extension ViewController: UITableViewDataSource {
 }
 
 extension ViewController: BeaconScannerDelegate {
+    
+    func sendLocalNotification(beaconID: String, eddystoneURL: String) {
+        let notif = UNMutableNotificationContent()
+        notif.title = beaconID
+        notif.subtitle = eddystoneURL
+        notif.body = "I liked it!!!!"
+        
+        let notifTrigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+        let request = UNNotificationRequest(identifier: "myNotification", content:  notif, trigger: notifTrigger)
+        
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if error != nil{
+                print(error!)
+            }
+        }
+    }
     func didFindBeacon(beaconScanner: BeaconScanner, beacon: Beacon) {
         print("Found beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
         DispatchQueue.main.async {
@@ -66,8 +88,6 @@ extension ViewController: BeaconScannerDelegate {
             return
         }
         
-        if eddystoneURL.absoluteString.contains("xp") {
-//            print("Beacon updated ", beacon.eddystoneURL!.absoluteString)
-        }
+        self.sendLocalNotification(beaconID: beacon.beaconID.description, eddystoneURL: eddystoneURL.absoluteString)
     }
 }

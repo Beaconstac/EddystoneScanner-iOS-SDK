@@ -18,6 +18,17 @@ public protocol BeaconScannerDelegate {
     func didUpdateBeacon(beaconScanner: BeaconScanner, beacon: Beacon)
 }
 
+/**
+ Scanner Configuration
+ 
+ - onDisplayWakeUp: Scans for eddystone beacons in background when display is woken up on clicking the lock button. Requires 'Always' Location permission
+ - whenInUse: Scans for eddystone beacons only when the app is open. Requires 'WhenInUse' Location permission
+ */
+public enum ScannerConfig {
+    case onDisplayWakeUp
+    case whenInUse
+}
+
 ///
 /// BeaconScanner
 ///

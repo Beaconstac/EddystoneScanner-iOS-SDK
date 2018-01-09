@@ -128,7 +128,6 @@
 			children = (
 				2837EA371FFE04C8007F3D81 /* BeaconScanner.swift */,
 				2837EA3B1FFE04C9007F3D81 /* DispatchTimer.swift */,
-				2837EA3A1FFE04C9007F3D81 /* Eddystone.swift */,
 				2837EA381FFE04C9007F3D81 /* Models */,
 				2837EA171FFE0434007F3D81 /* EddystoneScanner.h */,
 				2837EA181FFE0434007F3D81 /* Info.plist */,
@@ -148,6 +147,7 @@
 		2837EA381FFE04C9007F3D81 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				2837EA3A1FFE04C9007F3D81 /* Eddystone.swift */,
 				2837EA391FFE04C9007F3D81 /* Beacon.swift */,
 			);
 			path = Models;
@@ -258,6 +258,11 @@
 					2837EA431FFE0696007F3D81 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
