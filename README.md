@@ -42,3 +42,10 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 > You'll see a file named EddystoneScanner.framework.zip. 
 - Download the framwork and add it to your project.
 - Do not forget to check 'Copy files if needed' checkbox.
+
+
+## Background beacon scanning
+
+To support background scanning of beacons add `bluetooth-central` to the apps `Info.plist` as one of the values for `UIBackgroundModes` array or just do it from the Capabilities section of the app.
+
+![Xcode Capability Section](https://raw.githubusercontent.com/Beaconstac/EddystoneScanner-iOS-SDK/master/doc_images/background_scanning_capability.png)
