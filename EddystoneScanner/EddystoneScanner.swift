@@ -1,6 +1,6 @@
 //
 //  BeaconScanner.swift
-//  NearbyReplica
+//  EddystoneScanner
 //
 //  Created by Amit Prabhu on 27/11/17.
 //  Copyright © 2017 Amit Prabhu. All rights reserved.
@@ -9,61 +9,53 @@
 import CoreBluetooth
 
 ///
-/// BeaconScannerDelegate
+/// EddystoneScannerDelegate
 ///
-/// Implement this to receive notifications about beacons.
-public protocol BeaconScannerDelegate {
-    func didFindBeacon(beaconScanner: BeaconScanner, beacon: Beacon)
-    func didLoseBeacon(beaconScanner: BeaconScanner, beacon: Beacon)
-    func didUpdateBeacon(beaconScanner: BeaconScanner, beacon: Beacon)
-}
-
-/**
- Scanner Configuration
- 
- - onDisplayWakeUp: Scans for eddystone beacons in background when display is woken up on clicking the lock button. Requires 'Always' Location permission
- - whenInUse: Scans for eddystone beacons only when the app is open. Requires 'WhenInUse' Location permission
- */
-public enum ScannerConfig {
-    case onDisplayWakeUp
-    case whenInUse
+/// Implement this to receive notifications about beacons discovered in proximity.
+public protocol EddystoneScannerDelegate {
+    func didFindBeacon(scanner: EddystoneScanner, beacon: Beacon)
+    func didLoseBeacon(scanner: EddystoneScanner, beacon: Beacon)
+    func didUpdateBeacon(scanner: EddystoneScanner, beacon: Beacon)
 }
 
 ///
-/// BeaconScanner
+/// EddystoneScanner
 ///
 /// Scans for Eddystone compliant beacons using Core Bluetooth. To receive notifications of any
 /// sighted beacons, be sure to implement BeaconScannerDelegate and set that on the scanner.
 ///
-public class BeaconScanner: NSObject, CBCentralManagerDelegate {
+public class EddystoneScanner: NSObject {
     
-    public var delegate: BeaconScannerDelegate?
+    public var delegate: EddystoneScannerDelegate?
     
     /// Beacons that are close to the device.
-    /// Keeps getting updated. Beacons are removed periodically after no packets being recieved for 1 minuite
-    ///
+    /// Keeps getting updated. Beacons are removed periodically when no packets are recieved in a 10 second interval
     public var nearbyBeacons = [Beacon]()
     
+    
     private var centralManager: CBCentralManager!
-    private let beaconOperationsQueue: DispatchQueue = DispatchQueue(label: "com.nearbyservice.queue.beaconscanner")
+    private let beaconOperationsQueue: DispatchQueue = DispatchQueue(label: Constants.BEACON_OPERATION_QUEUE_LABEL)
     private var shouldBeScanning: Bool = false
     
     private var beaconTelemetryCache = [UUID: Data]()
     private var beaconURLCache = [UUID: URL]()
     
+    /// Timer to remove beacons not in the the apps proximity
     private var timer: DispatchTimer?
     
+    // MARK: Public functions
+    /// Initialises the CBCentralManager for scanning and the DispatchTimer
     public override init() {
         super.init()
         
         self.centralManager = CBCentralManager(delegate: self, queue: self.beaconOperationsQueue)
-        self.timer = DispatchTimer(repeatingInterval: 10.0)
+        self.timer = DispatchTimer(repeatingInterval: 10.0, queueLabel: Constants.DISPATCH_TIMER_QUEUE_LABEL)
         self.timer?.delegate = self
     }
     
-    /**
-     Start scanning. If Core Bluetooth isn't ready for us just yet, then waits and THEN starts scanning
-    */
+    ///
+    /// Start scanning. If Core Bluetooth isn't ready for us just yet, then waits and THEN starts scanning
+    ///
     public func startScanning() {
         self.beaconOperationsQueue.async { [weak self] in
             self?.startScanningSynchronized()
@@ -71,9 +63,9 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
         }
     }
     
-    /**
-     Stops scanning for beacons
-     */
+    ///
+    /// Stops scanning for beacons
+    ///
     public func stopScanning() {
         self.beaconOperationsQueue.async { [weak self] in
             self?.centralManager.stopScan()
@@ -81,9 +73,10 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
     }
     
     
-    /**
-     Starts scanning for beacons
-     */
+    // MARK: Private functions
+    ///
+    /// Starts scanning for beacons
+    ///
     private func startScanningSynchronized() {
         if self.centralManager.state != .poweredOn {
             print("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
@@ -96,28 +89,44 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
             self.centralManager.scanForPeripherals(withServices: services, options: options)
         }
     }
+}
 
-    ///
-    /// MARK - Delegate callbacks
-    ///
+extension EddystoneScanner {
+    // MARK: Sync functions
+    private static func sync(obj: Any, closure: () -> Void) {
+        objc_sync_enter(obj)
+        closure()
+        objc_sync_exit(obj)
+    }
     
+    private func appendBeacon(beacon: Beacon) {
+        EddystoneScanner.sync(obj: self.nearbyBeacons) {
+            self.nearbyBeacons.append(beacon)
+        }
+    }
+    
+    private func addBeacon(beacon: Beacon, atIndex index: Int) {
+        EddystoneScanner.sync(obj: self.nearbyBeacons) {
+            self.nearbyBeacons[index] = beacon
+        }
+    }
+}
+
+extension EddystoneScanner: CBCentralManagerDelegate {
+    // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn && self.shouldBeScanning {
             self.startScanningSynchronized();
         }
     }
     
-    ///
-    /// Core Bluetooth CBCentralManager callback when we discover a beacon. We're not super
-    /// interested in any error situations at this point in time.
-    ///
     public func centralManager(_ central: CBCentralManager,
-                                didDiscover peripheral: CBPeripheral,
-                                advertisementData: [String : Any],
-                                rssi RSSI: NSNumber) {
+                               didDiscover peripheral: CBPeripheral,
+                               advertisementData: [String : Any],
+                               rssi RSSI: NSNumber) {
         guard let serviceData = advertisementData[CBAdvertisementDataServiceDataKey]
             as? [NSObject : AnyObject] else {
-            return
+                return
         }
         
         // Get beacon index from the beacon list
@@ -140,8 +149,8 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
             beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
             self.addBeacon(beacon: beacon, atIndex: index)
             
-            self.delegate?.didUpdateBeacon(beaconScanner: self, beacon: beacon)
-
+            self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
+            
         case .uid, .eid:
             let telemetryData = self.beaconTelemetryCache[peripheral.identifier]
             let eddystoneURL = self.beaconURLCache[peripheral.identifier]
@@ -157,7 +166,7 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
                 beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
                 self.appendBeacon(beacon: beacon)
                 
-                self.delegate?.didFindBeacon(beaconScanner: self, beacon: beacon)
+                self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
                 break
             }
             
@@ -166,7 +175,7 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
             beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
             self.addBeacon(beacon: beacon, atIndex: index)
             
-            self.delegate?.didUpdateBeacon(beaconScanner: self, beacon: beacon)
+            self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
             
         case .url:
             let telemetryData = self.beaconTelemetryCache[peripheral.identifier]
@@ -184,7 +193,7 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
             beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
             self.addBeacon(beacon: beacon, atIndex: index)
             
-            self.delegate?.didUpdateBeacon(beaconScanner: self, beacon: beacon)
+            self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
             
         default:
             print("Unable to find service data; can't process Eddystone")
@@ -193,35 +202,15 @@ public class BeaconScanner: NSObject, CBCentralManagerDelegate {
     
 }
 
-extension BeaconScanner {
-    // MARK: Sync functions
-    private static func sync(obj: Any, closure: () -> Void) {
-        objc_sync_enter(obj)
-        closure()
-        objc_sync_exit(obj)
-    }
-    
-    private func appendBeacon(beacon: Beacon) {
-        BeaconScanner.sync(obj: self.nearbyBeacons) {
-            self.nearbyBeacons.append(beacon)
-        }
-    }
-    
-    private func addBeacon(beacon: Beacon, atIndex index: Int) {
-        BeaconScanner.sync(obj: self.nearbyBeacons) {
-            self.nearbyBeacons[index] = beacon
-        }
-    }
-}
-
-extension BeaconScanner: DispatchTimerProtocol {
-    func timerCalled(dispatchTimer: DispatchTimer?) {
-        BeaconScanner.sync(obj: self.nearbyBeacons) {
+extension EddystoneScanner: DispatchTimerDelegate {
+    // MARK: DispatchTimerProtocol delegate callbackss
+    public func timerCalled(timer: DispatchTimer?) {
+        EddystoneScanner.sync(obj: self.nearbyBeacons) {
             // Loop through the beacon list and find which beacon has not been seen in the last 15 seconds
             // Mutation of array in-place
             self.nearbyBeacons = self.nearbyBeacons.filter({ (beacon) -> Bool in
                 if Date().timeIntervalSince1970 - beacon.lastSeen.timeIntervalSince1970 > 15  {
-                    self.delegate?.didLoseBeacon(beaconScanner: self, beacon: beacon)
+                    self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
                     return false
                 }
                 return true

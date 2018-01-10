@@ -1,6 +1,6 @@
 //
 //  Beacon.swift
-//  NearbyReplica
+//  EddystoneScanner
 //
 //  Created by Amit Prabhu on 27/11/17.
 //  Copyright © 2017 Amit Prabhu. All rights reserved.
@@ -10,10 +10,10 @@ import Foundation
 import CoreBluetooth
 
 /// Main Beacon class
-public class Beacon: CustomStringConvertible, Equatable {
+public class Beacon {
     
     public let identifier: UUID
-    public let beaconID: BeaconID
+    public let beaconID: EddystoneBeaconID
     public let txPower: Int
     public var rssi: Int
     public var lastSeen: Date = Date()
@@ -21,7 +21,7 @@ public class Beacon: CustomStringConvertible, Equatable {
     public var telemetryData: Data?
     public var eddystoneURL: URL?
     
-    private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int) {
+    private init(identifier: UUID, beaconID: EddystoneBeaconID, txPower: Int, rssi: Int) {
         self.identifier = identifier
         self.beaconID = beaconID
         self.txPower = txPower
@@ -51,18 +51,18 @@ public class Beacon: CustomStringConvertible, Equatable {
         
         let txPower = Int(Int8(bitPattern:frameBytes[1]))
         
-        let beaconID: BeaconID
+        let beaconID: EddystoneBeaconID
         if frameByte == Eddystone.EddystoneUIDFrameTypeID {
             if frameBytes.count < 18 {
                 print("Frame Data for UID Frame unexpectedly truncated.")
             }
-            beaconID = BeaconID(beaconType: .eddystone,
+            beaconID = EddystoneBeaconID(beaconType: .eddystone,
                                     beaconID: Array(frameBytes[2..<18]))
         } else {
             if frameBytes.count < 10 {
                 print("Frame Data for EID Frame unexpectedly truncated.")
             }
-            beaconID = BeaconID(beaconType: .eddystoneEID,
+            beaconID = EddystoneBeaconID(beaconType: .eddystoneEID,
                                     beaconID: Array(frameBytes[2..<10]))
         }
         
@@ -82,15 +82,28 @@ public class Beacon: CustomStringConvertible, Equatable {
         self.rssi = rssi
         self.lastSeen = Date()
     }
-    
-    /// MARK: CustomStringConvertible protocol requirments
+}
+
+extension Beacon: CustomStringConvertible {
+    // MARK: CustomStringConvertible protocol requirements
     public var description: String {
         return self.beaconID.description
     }
-    
-    /// MARK: Equatable protocol requirments
+}
+
+extension Beacon: Equatable {
+    // MARK: Equatable protocol requirements
     public static func == (lhs: Beacon, rhs: Beacon) -> Bool {
         return lhs.beaconID == rhs.beaconID
+    }
+}
+
+extension Beacon: Hashable {
+    // MARK: Hashable protocol requirements
+    public var hashValue: Int {
+        get {
+            return self.description.hashValue
+        }
     }
 }
 
