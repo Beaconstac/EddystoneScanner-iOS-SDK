@@ -12,7 +12,7 @@ import UserNotifications
 
 class ViewController: UIViewController {
     
-    let scanner = BeaconScanner()
+    let scanner = EddystoneScanner()
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -37,6 +37,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: UITableViewDataSource {
+    // MARK: UITableViewDataSource
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let beacon = scanner.nearbyBeacons[indexPath.row]
         
@@ -52,8 +53,7 @@ extension ViewController: UITableViewDataSource {
     }
 }
 
-extension ViewController: BeaconScannerDelegate {
-    
+extension ViewController: EddystoneScannerDelegate {
     func sendLocalNotification(beaconID: String, eddystoneURL: String) {
         let notif = UNMutableNotificationContent()
         notif.title = beaconID
@@ -69,21 +69,23 @@ extension ViewController: BeaconScannerDelegate {
             }
         }
     }
-    func didFindBeacon(beaconScanner: BeaconScanner, beacon: Beacon) {
+    
+    // MARK: EddystoneScannerDelegate callbacks
+    func didFindBeacon(scanner: EddystoneScanner, beacon: Beacon) {
         print("Found beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
     
-    func didLoseBeacon(beaconScanner: BeaconScanner, beacon: Beacon) {
+    func didLoseBeacon(scanner: EddystoneScanner, beacon: Beacon) {
         print("Lost beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
     
-    func didUpdateBeacon(beaconScanner: BeaconScanner, beacon: Beacon) {
+    func didUpdateBeacon(scanner: EddystoneScanner, beacon: Beacon) {
         guard let eddystoneURL = beacon.eddystoneURL else {
             return
         }
