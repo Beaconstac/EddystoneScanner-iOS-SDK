@@ -93,6 +93,12 @@ extension SafeSet {
     }
     
     // MARK: Immutable methods
+    public func getSet() -> Set<E> {
+        return queue.sync {
+            return set
+        }
+    }
+    
     public func contains(_ member: E) -> Bool {
         return queue.sync {
             return set.contains(member)
