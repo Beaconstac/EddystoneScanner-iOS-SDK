@@ -67,21 +67,21 @@ extension ViewController: EddystoneScannerDelegate {
         
         UNUserNotificationCenter.current().add(request) { (error) in
             if error != nil{
-                print(error!)
+                debugPrint(error!)
             }
         }
     }
     
     // MARK: EddystoneScannerDelegate callbacks
     func didFindBeacon(scanner: EddystoneScanner, beacon: Beacon) {
-        print("Found beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
+        debugPrint("Found beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
     
     func didLoseBeacon(scanner: EddystoneScanner, beacon: Beacon) {
-        print("Lost beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
+        debugPrint("Lost beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }

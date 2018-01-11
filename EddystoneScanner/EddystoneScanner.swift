@@ -79,11 +79,11 @@ public class EddystoneScanner: NSObject {
     ///
     private func startScanningSynchronized() {
         if self.centralManager.state != .poweredOn {
-            print("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
+            debugPrint("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
             self.shouldBeScanning = true
         }
         else {
-            print("Starting to scan for Eddystones")
+            debugPrint("Starting to scan for Eddystones")
             let services = [CBUUID(string: "FEAA")]
             let options = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
             self.centralManager.scanForPeripherals(withServices: services, options: options)
@@ -120,7 +120,7 @@ extension EddystoneScanner: CBCentralManagerDelegate {
             self.handleURLFrame(peripheral: peripheral, serviceData: serviceData, RSSI: RSSI)
             
         default:
-            print("Unable to find service data; can't process Eddystone")
+            debugPrint("Unable to find service data; can't process Eddystone")
         }
     }
     

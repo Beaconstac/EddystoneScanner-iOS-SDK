@@ -45,7 +45,7 @@ public class Beacon {
         let frameByte = frameBytes[0]
         guard (frameByte == Eddystone.EddystoneUIDFrameTypeID ||
             frameByte == Eddystone.EddystoneEIDFrameTypeID) else {
-            print("Unexpected non UID/EID Frame passed to the initialiser.")
+            debugPrint("Unexpected non UID/EID Frame passed to the initialiser.")
             return nil
         }
         
@@ -54,13 +54,13 @@ public class Beacon {
         let beaconID: EddystoneBeaconID
         if frameByte == Eddystone.EddystoneUIDFrameTypeID {
             if frameBytes.count < 18 {
-                print("Frame Data for UID Frame unexpectedly truncated.")
+                debugPrint("Frame Data for UID Frame unexpectedly truncated.")
             }
             beaconID = EddystoneBeaconID(beaconType: .eddystone,
                                     beaconID: Array(frameBytes[2..<18]))
         } else {
             if frameBytes.count < 10 {
-                print("Frame Data for EID Frame unexpectedly truncated.")
+                debugPrint("Frame Data for EID Frame unexpectedly truncated.")
             }
             beaconID = EddystoneBeaconID(beaconType: .eddystoneEID,
                                     beaconID: Array(frameBytes[2..<10]))
