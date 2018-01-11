@@ -30,7 +30,7 @@ public class EddystoneScanner: NSObject {
     
     /// Beacons that are close to the device.
     /// Keeps getting updated. Beacons are removed periodically when no packets are recieved in a 10 second interval
-    public var nearbyBeacons = [Beacon]()
+    public var nearbyBeacons = SafeArray<Beacon>(identifier: "nearbyBeacons")
     
     
     private var centralManager: CBCentralManager!
@@ -87,27 +87,6 @@ public class EddystoneScanner: NSObject {
             let services = [CBUUID(string: "FEAA")]
             let options = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
             self.centralManager.scanForPeripherals(withServices: services, options: options)
-        }
-    }
-}
-
-extension EddystoneScanner {
-    // MARK: Sync functions
-    private static func sync(obj: Any, closure: () -> Void) {
-        objc_sync_enter(obj)
-        closure()
-        objc_sync_exit(obj)
-    }
-    
-    private func appendBeacon(beacon: Beacon) {
-        EddystoneScanner.sync(obj: self.nearbyBeacons) {
-            self.nearbyBeacons.append(beacon)
-        }
-    }
-    
-    private func addBeacon(beacon: Beacon, atIndex index: Int) {
-        EddystoneScanner.sync(obj: self.nearbyBeacons) {
-            self.nearbyBeacons[index] = beacon
         }
     }
 }
@@ -173,7 +152,7 @@ extension EddystoneScanner: CBCentralManagerDelegate {
         // Save the changing beacon data into the beacon object
         let beacon = self.nearbyBeacons[index]
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
-        self.addBeacon(beacon: beacon, atIndex: index)
+        self.nearbyBeacons[index] = beacon
         
         self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
     }
@@ -195,7 +174,7 @@ extension EddystoneScanner: CBCentralManagerDelegate {
                                         return
             }
             beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
-            self.appendBeacon(beacon: beacon)
+            self.nearbyBeacons.append(beacon)
             
             self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
             return
@@ -204,7 +183,7 @@ extension EddystoneScanner: CBCentralManagerDelegate {
         // Beacon already discovered. Update telemetry data
         let beacon = self.nearbyBeacons[index]
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
-        self.addBeacon(beacon: beacon, atIndex: index)
+        self.nearbyBeacons[index] = beacon
         
         self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
     }
@@ -227,7 +206,7 @@ extension EddystoneScanner: CBCentralManagerDelegate {
         // Update the beacon object
         let beacon = self.nearbyBeacons[index]
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
-        self.addBeacon(beacon: beacon, atIndex: index)
+        self.nearbyBeacons[index] = beacon
         
         self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
     }
@@ -237,16 +216,13 @@ extension EddystoneScanner: CBCentralManagerDelegate {
 extension EddystoneScanner: DispatchTimerDelegate {
     // MARK: DispatchTimerProtocol delegate callbacks
     public func timerCalled(timer: DispatchTimer?) {
-        EddystoneScanner.sync(obj: self.nearbyBeacons) {
-            // Loop through the beacon list and find which beacon has not been seen in the last 15 seconds
-            // Mutation of array in-place
-            self.nearbyBeacons = self.nearbyBeacons.filter({ (beacon) -> Bool in
-                if Date().timeIntervalSince1970 - beacon.lastSeen.timeIntervalSince1970 > 15  {
-                    self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
-                    return false
-                }
-                return true
-            })
+        // Loop through the beacon list and find which beacon has not been seen in the last 15 seconds
+        self.nearbyBeacons.filterInPlace() { beacon in
+            if Date().timeIntervalSince1970 - beacon.lastSeen.timeIntervalSince1970 > 15  {
+                self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
+                return false
+            }
+            return true
         }
     }
 }

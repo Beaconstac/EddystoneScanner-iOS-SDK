@@ -31,7 +31,7 @@ public class SafeArray<E: Any> {
         }
         set {
             queue.async(flags: .barrier) {
-                self.array.insert(newValue, at: index)
+                self.array[index] = newValue
             }
         }
     }
@@ -39,24 +39,45 @@ public class SafeArray<E: Any> {
 
 extension SafeArray {
     // MARK: Mutable methods
-    public func append(value: E) {
+    public func append(_ newElement: E) {
         queue.async(flags: .barrier) {
-            self.array.append(value)
+            self.array.append(newElement)
         }
     }
     
-    func remove(at index: Int) {
+    public func remove(at index: Int) {
         queue.async(flags: .barrier) {
             self.array.remove(at: index)
+        }
+    }
+    
+    public func filterInPlace(_ isIncluded: @escaping (E) -> Bool) {
+        queue.async(flags: .barrier) {
+            let originalArray = self.array
+            self.array = [E]()
+            for element in originalArray {
+                if isIncluded(element) {
+                    self.array.append(element)
+                }
+            }
         }
     }
 }
 
 extension SafeArray {
+    // MARK: Immutable properties
+    public var count: Int {
+        get {
+            return queue.sync {
+                return self.array.count
+            }
+        }
+    }
+    
     // MARK: Immutable methods
-    func filter(_ isIncluded: (E) -> Bool) -> [E] {
+    public func index(where predicate: (E) -> Bool) -> Int? {
         return queue.sync {
-            return self.array.filter(isIncluded)
+            return self.array.index(where: predicate)
         }
     }
 }
