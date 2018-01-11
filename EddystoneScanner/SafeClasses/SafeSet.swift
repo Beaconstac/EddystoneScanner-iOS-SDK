@@ -22,6 +22,14 @@ public class SafeSet<E: Hashable> {
     public init(identifier: String) {
         queue = DispatchQueue(label: "com.safeset.\(Date().timeIntervalSince1970).\(identifier)", attributes: .concurrent)
     }
+    
+    subscript(index: Set<E>.Index) -> E {
+        get {
+            return queue.sync {
+                return set[index]
+            }
+        }
+    }
 }
 
 extension SafeSet {
@@ -38,6 +46,24 @@ extension SafeSet {
         }
     }
     
+    public func update(with member: E) {
+        queue.async(flags: .barrier) {
+            let _ = self.set.update(with: member)
+        }
+    }
+    
+    public func filterInPlace(_ isIncluded: @escaping (E) -> Bool) {
+        queue.async(flags: .barrier) {
+            let originalSet = self.set
+            self.set = Set<E>()
+            
+            for member in originalSet {
+                if isIncluded(member) {
+                    self.set.insert(member)
+                }
+            }
+        }
+    }
 }
 
 extension SafeSet {
@@ -64,4 +90,17 @@ extension SafeSet {
             return set.contains(member)
         }
     }
+    
+    public func index(of member: E) -> Set<E>.Index? {
+        return queue.sync {
+            return set.index(of: member)
+        }
+    }
+    
+    public func index(where predicate: (E) -> Bool) -> Set<E>.Index? {
+        return queue.sync {
+            return self.set.index(where: predicate)
+        }
+    }
 }
+
