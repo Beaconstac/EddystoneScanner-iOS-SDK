@@ -26,6 +26,7 @@
 		28AC7451200628FD00C24E0C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28AC7450200628FD00C24E0C /* Constants.swift */; };
 		28D22BB920072E670053DE96 /* SafeDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D22BB820072E670053DE96 /* SafeDictionary.swift */; };
 		28D22BBB200743410053DE96 /* SafeArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D22BBA200743410053DE96 /* SafeArray.swift */; };
+		28D22BBD2007629C0053DE96 /* SafeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D22BBC2007629C0053DE96 /* SafeSet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,7 @@
 		28AC7450200628FD00C24E0C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		28D22BB820072E670053DE96 /* SafeDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeDictionary.swift; sourceTree = "<group>"; };
 		28D22BBA200743410053DE96 /* SafeArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeArray.swift; sourceTree = "<group>"; };
+		28D22BBC2007629C0053DE96 /* SafeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeSet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +136,7 @@
 		2837EA161FFE0434007F3D81 /* EddystoneScanner */ = {
 			isa = PBXGroup;
 			children = (
+				28D22BBE200763C40053DE96 /* SafeClasses */,
 				2837EA381FFE04C9007F3D81 /* Models */,
 				28AC744D20061B7800C24E0C /* EddystoneRFC */,
 				2837EA371FFE04C8007F3D81 /* EddystoneScanner.swift */,
@@ -141,8 +144,6 @@
 				28AC7450200628FD00C24E0C /* Constants.swift */,
 				2837EA171FFE0434007F3D81 /* EddystoneScanner.h */,
 				2837EA181FFE0434007F3D81 /* Info.plist */,
-				28D22BB820072E670053DE96 /* SafeDictionary.swift */,
-				28D22BBA200743410053DE96 /* SafeArray.swift */,
 			);
 			path = EddystoneScanner;
 			sourceTree = "<group>";
@@ -185,6 +186,16 @@
 				28AC744E20061BA400C24E0C /* EddystoneBeaconID.swift */,
 			);
 			path = EddystoneRFC;
+			sourceTree = "<group>";
+		};
+		28D22BBE200763C40053DE96 /* SafeClasses */ = {
+			isa = PBXGroup;
+			children = (
+				28D22BB820072E670053DE96 /* SafeDictionary.swift */,
+				28D22BBA200743410053DE96 /* SafeArray.swift */,
+				28D22BBC2007629C0053DE96 /* SafeSet.swift */,
+			);
+			path = SafeClasses;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,6 +354,7 @@
 				2837EA3C1FFE04C9007F3D81 /* EddystoneScanner.swift in Sources */,
 				2837EA3D1FFE04C9007F3D81 /* Beacon.swift in Sources */,
 				28D22BB920072E670053DE96 /* SafeDictionary.swift in Sources */,
+				28D22BBD2007629C0053DE96 /* SafeSet.swift in Sources */,
 				28AC744F20061BA400C24E0C /* EddystoneBeaconID.swift in Sources */,
 				2837EA3F1FFE04C9007F3D81 /* DispatchTimer.swift in Sources */,
 				28AC7451200628FD00C24E0C /* Constants.swift in Sources */,

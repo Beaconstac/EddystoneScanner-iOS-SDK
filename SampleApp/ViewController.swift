@@ -39,8 +39,10 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     // MARK: UITableViewDataSource
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let beacon = scanner.nearbyBeacons[indexPath.row]
+        let nearbyBeacons = scanner.nearbyBeacons
+        let index = nearbyBeacons.index(nearbyBeacons.startIndex, offsetBy: indexPath.row)
         
+        let beacon = nearbyBeacons[index]
         let cell = tableView.dequeueReusableCell(withIdentifier: BeaconTableViewCell.cellIdentifier) as! BeaconTableViewCell
         cell.beaconName.text = beacon.beaconID.description
         cell.eddystoneURL.text = beacon.eddystoneURL?.absoluteString
@@ -90,6 +92,9 @@ extension ViewController: EddystoneScannerDelegate {
             return
         }
         
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
         self.sendLocalNotification(beaconID: beacon.beaconID.description, eddystoneURL: eddystoneURL.absoluteString)
     }
 }
