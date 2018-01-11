@@ -8,29 +8,55 @@
 
 import Foundation
 
+///
+/// Safe Dictionary
+///
+/// Thread safe generic dictionary class in swift
+/// Methods and properties are similar to that of the generic Dictionary class
+/// Example: let a = SafeDictionary<String, Int>(identifier: "a")
+///
 public class SafeDictionary<K:Hashable, V: Any> {
     private let queue: DispatchQueue
     private var dict = [K:V]()
     
-    init(identifier: String) {
+    public init(identifier: String) {
         queue = DispatchQueue(label: "com.safedictionary.\(Date().timeIntervalSince1970).\(identifier)", attributes: .concurrent)
     }
     
-    subscript(key: K) -> V? {
+    public subscript(key: K) -> V? {
         get {
             return queue.sync {
                 return dict[key]
             }
         }
         set {
-            queue.async(flags: .barrier) { [unowned self] in
+            queue.async(flags: .barrier) {
                 self.dict[key] = newValue
             }
         }
     }
-    
-    
 }
 
-// Example usage
-let a = SafeDictionary<String, Int>(identifier: "a")
+extension SafeDictionary {
+    // MARK: Mutable methods
+    public func removeValue(forKey key: K) {
+        queue.async(flags: .barrier) {
+            self.dict[key] = nil
+        }
+    }
+}
+
+extension SafeDictionary {
+    // MARK: Immutable methods
+    public var keys: Dictionary<K, V>.Keys {
+        return queue.sync {
+            return dict.keys
+        }
+    }
+    
+    public var values: Dictionary<K, V>.Values {
+        return queue.sync {
+            return dict.values
+        }
+    }
+}
