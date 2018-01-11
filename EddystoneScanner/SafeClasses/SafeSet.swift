@@ -23,7 +23,7 @@ public class SafeSet<E: Hashable> {
         queue = DispatchQueue(label: "com.safeset.\(Date().timeIntervalSince1970).\(identifier)", attributes: .concurrent)
     }
     
-    subscript(index: Set<E>.Index) -> E {
+    public subscript(index: Set<E>.Index) -> E {
         get {
             return queue.sync {
                 return set[index]
@@ -84,6 +84,14 @@ extension SafeSet {
         }
     }
     
+    public var startIndex: Set<E>.Index {
+        get {
+            return queue.sync {
+                return set.startIndex
+            }
+        }
+    }
+    
     // MARK: Immutable methods
     public func contains(_ member: E) -> Bool {
         return queue.sync {
@@ -97,10 +105,15 @@ extension SafeSet {
         }
     }
     
-    public func index(where predicate: (E) -> Bool) -> Set<E>.Index? {
+    public func index(where predicate: (E) throws -> Bool) rethrows -> Set<E>.Index? {
+        return try queue.sync {
+            return try self.set.index(where: predicate)
+        }
+    }
+    
+    public func index(_ i: Set<E>.Index, offsetBy offset: Int) -> Set<E>.Index {
         return queue.sync {
-            return self.set.index(where: predicate)
+            return self.set.index(i, offsetBy: offset)
         }
     }
 }
-

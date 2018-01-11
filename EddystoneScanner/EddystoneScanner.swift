@@ -162,6 +162,7 @@ extension EddystoneScanner: CBCentralManagerDelegate {
                                       rssi: RSSI.intValue) else {
                                         return
             }
+            
             beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
             self.nearbyBeacons.insert(beacon)
             
