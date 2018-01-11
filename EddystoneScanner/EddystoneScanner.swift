@@ -37,8 +37,8 @@ public class EddystoneScanner: NSObject {
     private let beaconOperationsQueue: DispatchQueue = DispatchQueue(label: Constants.BEACON_OPERATION_QUEUE_LABEL)
     private var shouldBeScanning: Bool = false
     
-    private var beaconTelemetryCache = [UUID: Data]()
-    private var beaconURLCache = [UUID: URL]()
+    private var beaconTelemetryCache = SafeDictionary<UUID, Data>(identifier: "beaconTelemetryCache")
+    private var beaconURLCache = SafeDictionary<UUID, URL>(identifier: "beaconURLCache")
     
     /// Timer to remove beacons not in the the apps proximity
     private var timer: DispatchTimer?
