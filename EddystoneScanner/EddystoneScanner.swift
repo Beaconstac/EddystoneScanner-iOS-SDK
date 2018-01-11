@@ -26,6 +26,12 @@ public protocol EddystoneScannerDelegate {
 ///
 public class EddystoneScanner: NSObject {
     
+    public typealias ESBeacon = Beacon
+    public typealias ESDispatchTimer = DispatchTimer
+    public typealias ESSafeDictionary = SafeDictionary
+    public typealias ESSafeArray = SafeArray
+    public typealias ESSafeSet = SafeSet
+    
     public var delegate: EddystoneScannerDelegate?
     
     /// Beacons that are close to the device.
