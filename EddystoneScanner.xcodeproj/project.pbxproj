@@ -25,6 +25,7 @@
 		28AC744F20061BA400C24E0C /* EddystoneBeaconID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28AC744E20061BA400C24E0C /* EddystoneBeaconID.swift */; };
 		28AC7451200628FD00C24E0C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28AC7450200628FD00C24E0C /* Constants.swift */; };
 		28D22BB920072E670053DE96 /* SafeDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D22BB820072E670053DE96 /* SafeDictionary.swift */; };
+		28D22BBB200743410053DE96 /* SafeArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D22BBA200743410053DE96 /* SafeArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 		28AC744E20061BA400C24E0C /* EddystoneBeaconID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EddystoneBeaconID.swift; sourceTree = "<group>"; };
 		28AC7450200628FD00C24E0C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		28D22BB820072E670053DE96 /* SafeDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeDictionary.swift; sourceTree = "<group>"; };
+		28D22BBA200743410053DE96 /* SafeArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeArray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +142,7 @@
 				2837EA171FFE0434007F3D81 /* EddystoneScanner.h */,
 				2837EA181FFE0434007F3D81 /* Info.plist */,
 				28D22BB820072E670053DE96 /* SafeDictionary.swift */,
+				28D22BBA200743410053DE96 /* SafeArray.swift */,
 			);
 			path = EddystoneScanner;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28D22BBB200743410053DE96 /* SafeArray.swift in Sources */,
 				2837EA3E1FFE04C9007F3D81 /* Eddystone.swift in Sources */,
 				2837EA3C1FFE04C9007F3D81 /* EddystoneScanner.swift in Sources */,
 				2837EA3D1FFE04C9007F3D81 /* Beacon.swift in Sources */,
