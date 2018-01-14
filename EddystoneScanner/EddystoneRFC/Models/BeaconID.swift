@@ -29,32 +29,31 @@ public struct BeaconID {
     public let beaconType: BeaconType
     
     ///
-    /// The raw beaconID data. This is typically printed out in hex format.
+    /// unique 16-byte Beacon ID composed of a 10-byte namespace and a 6-byte instance
+    /// Get hexString by doing beaconID.hexString
     ///
     public let beaconID: [UInt8]
     
     ///
-    /// Hexadecimal equvivalent of the beaconID
+    /// 10 byte raw namespace data
     ///
-    public var hexBeaconID: String {
-        var hexString = ""
-        for byte in self.beaconID {
-            var s = String(byte, radix:16, uppercase: false)
-            if s.count == 1 {
-                s = "0" + s
-            }
-            hexString += s
-        }
-        return hexString
+    public lazy var namespace: ArraySlice<UInt8> {
+        return beaconID[..<10]
+    }
+    
+    ///
+    /// 6 byte raw namespace data
+    ///
+    public lazy var instance: ArraySlice<UInt8> {
+        return beaconID[10..<16]
     }
     
     ///
     /// Base64 encoded string of the byte beacon ID data
     ///
-    public lazy var beaconAdvertisedId: String = {
-        let data = Data(bytes: self.beaconID)
-        return data.base64EncodedString()
-    }()
+    public lazy var beaconAdvertisedId: String {
+        return beaconID.data.base64EncodedString()
+    }
     
     /**
      Internal initialiser
@@ -78,10 +77,8 @@ extension BeaconID: CustomStringConvertible {
 
 extension BeaconID: Equatable {
     // MARK: Equatable protocol requirments
-    public static func == (lhs: BeaconID, rhs:
-        BeaconID) -> Bool {
-        return
-            lhs.beaconID == rhs.beaconID &&
+    public static func == (lhs: BeaconID, rhs: BeaconID) -> Bool {
+        return lhs.beaconID == rhs.beaconID &&
                 lhs.beaconType == rhs.beaconType
     }
 }

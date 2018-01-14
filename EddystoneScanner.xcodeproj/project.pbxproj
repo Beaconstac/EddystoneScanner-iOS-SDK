@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2822368C200B6FED0028E97F /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2822368B200B6FED0028E97F /* Util.swift */; };
 		2837EA1E1FFE0434007F3D81 /* EddystoneScanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2837EA141FFE0434007F3D81 /* EddystoneScanner.framework */; };
 		2837EA231FFE0434007F3D81 /* EddystoneScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2837EA221FFE0434007F3D81 /* EddystoneScannerTests.swift */; };
 		2837EA251FFE0434007F3D81 /* EddystoneScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2837EA171FFE0434007F3D81 /* EddystoneScanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -61,6 +62,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2822368B200B6FED0028E97F /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		2837EA141FFE0434007F3D81 /* EddystoneScanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EddystoneScanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2837EA171FFE0434007F3D81 /* EddystoneScanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EddystoneScanner.h; sourceTree = "<group>"; };
 		2837EA181FFE0434007F3D81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 			children = (
 				2822368A200B30820028E97F /* Models */,
 				2837EA3A1FFE04C9007F3D81 /* Eddystone.swift */,
+				2822368B200B6FED0028E97F /* Util.swift */,
 			);
 			path = EddystoneRFC;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 				28D22BB920072E670053DE96 /* SafeDictionary.swift in Sources */,
 				28D22BBD2007629C0053DE96 /* SafeSet.swift in Sources */,
 				28AC744F20061BA400C24E0C /* BeaconID.swift in Sources */,
+				2822368C200B6FED0028E97F /* Util.swift in Sources */,
 				2837EA3F1FFE04C9007F3D81 /* DispatchTimer.swift in Sources */,
 				28AC7451200628FD00C24E0C /* Constants.swift in Sources */,
 			);
