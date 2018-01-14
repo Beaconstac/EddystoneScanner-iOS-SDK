@@ -37,21 +37,21 @@ public struct BeaconID {
     ///
     /// 10 byte raw namespace data
     ///
-    public lazy var namespace: ArraySlice<UInt8> {
+    public var namespace: ArraySlice<UInt8> {
         return beaconID[..<10]
     }
     
     ///
     /// 6 byte raw namespace data
     ///
-    public lazy var instance: ArraySlice<UInt8> {
+    public var instance: ArraySlice<UInt8> {
         return beaconID[10..<16]
     }
     
     ///
     /// Base64 encoded string of the byte beacon ID data
     ///
-    public lazy var beaconAdvertisedId: String {
+    public var beaconAdvertisedId: String {
         return beaconID.data.base64EncodedString()
     }
     
@@ -71,7 +71,7 @@ public struct BeaconID {
 extension BeaconID: CustomStringConvertible {
     // MARK: CustomStringConvertible protocol requirments
     public var description: String {
-        return hexBeaconID
+        return beaconID.hexString
     }
 }
 
