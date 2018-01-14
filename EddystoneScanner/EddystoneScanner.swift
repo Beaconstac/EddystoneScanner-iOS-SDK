@@ -12,10 +12,10 @@ import CoreBluetooth
 /// EddystoneScannerDelegate
 ///
 /// Implement this to receive notifications about beacons discovered in proximity.
-public protocol EddystoneScannerDelegate {
-    func didFindBeacon(scanner: EddystoneScanner, beacon: Beacon)
-    func didLoseBeacon(scanner: EddystoneScanner, beacon: Beacon)
-    func didUpdateBeacon(scanner: EddystoneScanner, beacon: Beacon)
+public protocol ScannerDelegate {
+    func didFindBeacon(scanner: Scanner, beacon: Beacon)
+    func didLoseBeacon(scanner: Scanner, beacon: Beacon)
+    func didUpdateBeacon(scanner: Scanner, beacon: Beacon)
 }
 
 ///
@@ -24,15 +24,10 @@ public protocol EddystoneScannerDelegate {
 /// Scans for Eddystone compliant beacons using Core Bluetooth. To receive notifications of any
 /// sighted beacons, be sure to implement BeaconScannerDelegate and set that on the scanner.
 ///
-public class EddystoneScanner: NSObject {
+public class Scanner: NSObject {
     
-    public typealias ESBeacon = Beacon
-    public typealias ESDispatchTimer = DispatchTimer
-    public typealias ESSafeDictionary = SafeDictionary
-    public typealias ESSafeArray = SafeArray
-    public typealias ESSafeSet = SafeSet
-    
-    public var delegate: EddystoneScannerDelegate?
+    /// Scanner Delegate
+    public var delegate: ScannerDelegate?
     
     /// Beacons that are close to the device.
     /// Keeps getting updated. Beacons are removed periodically when no packets are recieved in a 10 second interval
@@ -97,7 +92,7 @@ public class EddystoneScanner: NSObject {
     }
 }
 
-extension EddystoneScanner: CBCentralManagerDelegate {
+extension Scanner: CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn && self.shouldBeScanning {
@@ -208,7 +203,7 @@ extension EddystoneScanner: CBCentralManagerDelegate {
     
 }
 
-extension EddystoneScanner: DispatchTimerDelegate {
+extension Scanner: DispatchTimerDelegate {
     // MARK: DispatchTimerProtocol delegate callbacks
     public func timerCalled(timer: DispatchTimer?) {
         // Loop through the beacon list and find which beacon has not been seen in the last 15 seconds

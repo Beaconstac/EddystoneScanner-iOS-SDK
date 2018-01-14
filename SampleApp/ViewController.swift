@@ -12,7 +12,7 @@ import UserNotifications
 
 class ViewController: UIViewController {
     
-    let scanner = EddystoneScanner()
+    let scanner = Scanner()
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -73,21 +73,21 @@ extension ViewController: EddystoneScannerDelegate {
     }
     
     // MARK: EddystoneScannerDelegate callbacks
-    func didFindBeacon(scanner: EddystoneScanner, beacon: Beacon) {
+    func didFindBeacon(scanner: Scanner, beacon: Beacon) {
         debugPrint("Found beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
     
-    func didLoseBeacon(scanner: EddystoneScanner, beacon: Beacon) {
+    func didLoseBeacon(scanner: Scanner, beacon: Beacon) {
         debugPrint("Lost beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
     
-    func didUpdateBeacon(scanner: EddystoneScanner, beacon: Beacon) {
+    func didUpdateBeacon(scanner: Scanner, beacon: Beacon) {
         guard let eddystoneURL = beacon.eddystoneURL else {
             return
         }
