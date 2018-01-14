@@ -14,7 +14,7 @@ import Foundation
  - eddystone: 10 bytes namespace + 6 bytes instance = 16 byte ID.
  - eddystoneEID: 8 byte ID
  */
-public enum EddystoneBeaconType {
+public enum BeaconType {
     case eddystone
     case eddystoneEID
 }
@@ -24,9 +24,9 @@ public enum EddystoneBeaconType {
 ///
 /// Uniquely identifies an Eddystone compliant beacon.
 ///
-public class EddystoneBeaconID {
+public struct BeaconID {
     
-    public let beaconType: EddystoneBeaconType
+    public let beaconType: BeaconType
     
     ///
     /// The raw beaconID data. This is typically printed out in hex format.
@@ -36,7 +36,7 @@ public class EddystoneBeaconID {
     ///
     /// Hexadecimal equvivalent of the beaconID
     ///
-    public lazy var hexBeaconID: String = {
+    public var hexBeaconID: String {
         var hexString = ""
         for byte in self.beaconID {
             var s = String(byte, radix:16, uppercase: false)
@@ -46,7 +46,7 @@ public class EddystoneBeaconID {
             hexString += s
         }
         return hexString
-    }()
+    }
     
     ///
     /// Base64 encoded string of the byte beacon ID data
@@ -62,23 +62,24 @@ public class EddystoneBeaconID {
      - Parameter beaconType: BeaconType
      - Parameter beaconID: BeaconID
      */
-    internal init(beaconType: EddystoneBeaconType, beaconID: [UInt8]) {
+    internal init(beaconType: BeaconType, beaconID: [UInt8]) {
         self.beaconID = beaconID
         self.beaconType = beaconType
     }
 }
 
 
-extension EddystoneBeaconID: CustomStringConvertible {
+extension BeaconID: CustomStringConvertible {
     // MARK: CustomStringConvertible protocol requirments
     public var description: String {
-        return self.hexBeaconID
+        return hexBeaconID
     }
 }
 
-extension EddystoneBeaconID: Equatable {
+extension BeaconID: Equatable {
     // MARK: Equatable protocol requirments
-    public static func == (lhs: EddystoneBeaconID, rhs: EddystoneBeaconID) -> Bool {
+    public static func == (lhs: BeaconID, rhs:
+        BeaconID) -> Bool {
         return
             lhs.beaconID == rhs.beaconID &&
                 lhs.beaconType == rhs.beaconType

@@ -13,7 +13,7 @@ import CoreBluetooth
 public class Beacon {
     
     public let identifier: UUID
-    public let beaconID: EddystoneBeaconID
+    public let beaconID: BeaconID
     public let txPower: Int
     public var rssi: Int
     public var lastSeen: Date = Date()
@@ -21,7 +21,7 @@ public class Beacon {
     public var telemetryData: Data?
     public var eddystoneURL: URL?
     
-    private init(identifier: UUID, beaconID: EddystoneBeaconID, txPower: Int, rssi: Int) {
+    private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int) {
         self.identifier = identifier
         self.beaconID = beaconID
         self.txPower = txPower
@@ -51,18 +51,18 @@ public class Beacon {
         
         let txPower = Int(Int8(bitPattern:frameBytes[1]))
         
-        let beaconID: EddystoneBeaconID
+        let beaconID: BeaconID
         if frameByte == Eddystone.EddystoneUIDFrameTypeID {
             if frameBytes.count < 18 {
                 debugPrint("Frame Data for UID Frame unexpectedly truncated.")
             }
-            beaconID = EddystoneBeaconID(beaconType: .eddystone,
+            beaconID = BeaconID(beaconType: .eddystone,
                                     beaconID: Array(frameBytes[2..<18]))
         } else {
             if frameBytes.count < 10 {
                 debugPrint("Frame Data for EID Frame unexpectedly truncated.")
             }
-            beaconID = EddystoneBeaconID(beaconType: .eddystoneEID,
+            beaconID = BeaconID(beaconType: .eddystoneEID,
                                     beaconID: Array(frameBytes[2..<10]))
         }
         
