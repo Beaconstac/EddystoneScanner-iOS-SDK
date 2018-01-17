@@ -33,13 +33,9 @@ public class Scanner: NSObject {
     /// Keeps getting updated. Beacons are removed periodically when no packets are recieved in a 10 second interval
     public var nearbyBeacons = SafeSet<Beacon>(identifier: "nearbyBeacons")
     
-    
     private var centralManager: CBCentralManager!
     private let beaconOperationsQueue: DispatchQueue = DispatchQueue(label: Constants.BEACON_OPERATION_QUEUE_LABEL)
     private var shouldBeScanning: Bool = false
-    
-    private var beaconTelemetryCache = SafeDictionary<UUID, Data>(identifier: "beaconTelemetryCache")
-    private var beaconURLCache = SafeDictionary<UUID, URL>(identifier: "beaconURLCache")
     
     /// Timer to remove beacons not in the the apps proximity
     private var timer: DispatchTimer?
@@ -130,19 +126,16 @@ extension Scanner: CBCentralManagerDelegate {
     private func handleTelemetryFrame(peripheral: CBPeripheral,
                                      serviceData: [NSObject: AnyObject],
                                      RSSI: NSNumber) {
-        let telemetryData = Eddystone.telemetryDataForFrame(advertisementFrameList: serviceData)
-        let eddystoneURL = self.beaconURLCache[peripheral.identifier]
-        
-        // Stash away the telemetry data for later use
-        beaconTelemetryCache[peripheral.identifier] = telemetryData
         
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
+            debugPrint("Beacon UID frame not yet discovered")
             return
         }
         
         // Save the changing beacon data into the beacon object
+        let telemetryData = Eddystone.telemetryDataForFrame(advertisementFrameList: serviceData)
         let beacon = self.nearbyBeacons[index]
-        beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
+        beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
         self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
@@ -152,28 +145,22 @@ extension Scanner: CBCentralManagerDelegate {
     private func handleEIDUIDFrame(peripheral: CBPeripheral,
                                       serviceData: [NSObject: AnyObject],
                                       RSSI: NSNumber) {
-        let telemetryData = self.beaconTelemetryCache[peripheral.identifier]
-        let eddystoneURL = self.beaconURLCache[peripheral.identifier]
         
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
             // Newly discovered beacon. Create a new beacon object
             let beaconServiceData = serviceData[Eddystone.ServiceUUID] as? Data
-            guard let beacon = Beacon(identifier: peripheral.identifier,
-                                      frameData: beaconServiceData,
-                                      rssi: RSSI.intValue) else {
-                                        return
+            guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue) else {
+                return
             }
             
-            beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
             self.nearbyBeacons.insert(beacon)
-            
             self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
             return
         }
         
-        // Beacon already discovered. Update telemetry data
+        // Beacon already discovered. Update rssi and last seen value of the beacon
         let beacon = self.nearbyBeacons[index]
-        beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
+        beacon.updateBeacon(telemetryData: nil, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
         self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
@@ -183,19 +170,16 @@ extension Scanner: CBCentralManagerDelegate {
     private func handleURLFrame(peripheral: CBPeripheral,
                                    serviceData: [NSObject: AnyObject],
                                    RSSI: NSNumber) {
-        let telemetryData = self.beaconTelemetryCache[peripheral.identifier]
+        
         let eddystoneURL = Eddystone.parseURLFromFrame(advertisementFrameList: serviceData)
-        
-        // Stash away the URL for later use
-        self.beaconURLCache[peripheral.identifier] = eddystoneURL
-        
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
+            debugPrint("Beacon UID frame not yet discovered")
             return
         }
         
         // Update the beacon object
         let beacon = self.nearbyBeacons[index]
-        beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
+        beacon.updateBeacon(telemetryData: nil, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
         self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
