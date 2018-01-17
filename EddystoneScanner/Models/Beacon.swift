@@ -78,12 +78,21 @@ public class Beacon {
      - Parameter rssi: The current RSSI value of the beacon.
      */
     internal func updateBeacon(telemetryData: Data?, eddystoneURL: URL?, rssi: Int) {
-        if let telemetryData = telemetryData {
-            self.telemetry = Telemetry(tlmFrameData: telemetryData)
-        }
         self.eddystoneURL = eddystoneURL
         self.rssi = rssi
         self.lastSeen = Date()
+        
+        guard let telemetryData = telemetryData else {
+            return
+        }
+        
+        // Check if the beacon already has a telemtry data object
+        if let _ = self.telemetry {
+            self.telemetry?.update(tlmFrameData: telemetryData)
+        } else {
+            // Create a new object
+            self.telemetry = Telemetry(tlmFrameData: telemetryData)
+        }
     }
 }
 
