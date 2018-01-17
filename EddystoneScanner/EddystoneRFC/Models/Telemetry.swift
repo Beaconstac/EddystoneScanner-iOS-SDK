@@ -29,6 +29,18 @@ public struct Telemetry {
     /// SEC_CNT is a 0.1 second resolution counter that represents time since beacon power-up or reboot
     public var uptime: Float?
     
+    /// Calculates the advertising interval of the beacon in milliseconds
+    /// Assumes the beacon is transmitting all 3 eddystone packets (UID, URL and TLM frames)
+    public lazy var advInt: Float {
+        guard let uptime = self.uptime,
+            let advCount = self.advCount else {
+                return 0
+        }
+        
+        let numberOFFramesPerBeacon = 3
+        return (numberOFFramesPerBeacon * 1000) / (Float(advCount) / uptime)
+    }
+    
     internal init?(tlmFrameData: Data) {
         guard let frameBytes = Telemetry.validateTLMFrameData(tlmFrameData: tlmFrameData) else {
             debugPrint("Failed to iniatialize the telemtry object")
