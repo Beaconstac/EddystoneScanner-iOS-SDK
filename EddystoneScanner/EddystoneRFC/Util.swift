@@ -40,7 +40,8 @@ internal func bytesToUInt(byteArray: ArraySlice<UInt8>) -> UInt? {
     var result: UInt = 0
     for idx in 0..<(byteArray.count) {
         let shiftAmount = UInt((byteArray.count) - idx - 1) * 8
-        result += UInt(byteArray[idx]) << shiftAmount
+        let value = UInt(byteArray[byteArray.startIndex + idx])
+        result += value << shiftAmount
     }
     return result
 }
