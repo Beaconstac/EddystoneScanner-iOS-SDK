@@ -12,14 +12,25 @@ import CoreBluetooth
 /// Main Beacon class
 public class Beacon {
     
+    /// UUID identifier of the beacon
     public let identifier: UUID
+    
+    /// BeaconID - unique for each beacon as per Eddystone RFC
     public let beaconID: BeaconID
+    
+    /// Transmission power of the beacon
     public let txPower: Int
+    
+    /// RSSI value of the beacon. Can be used to determine how far away the beacon is from the device
     public var rssi: Int
+    
+    /// Timestamp when the device recieved a packet from the beacon. Can be any one of URL, UID/EID or the TLM frames
     public var lastSeen: Date = Date()
     
+    /// Eddystone URL being broadcasted by the beacon
     public var eddystoneURL: URL?
     
+    /// Telemtry data from the beacon. Always updated to the latest value
     public var telemetry: Telemetry?
     
     private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int) {

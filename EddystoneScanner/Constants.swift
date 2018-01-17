@@ -15,5 +15,5 @@ import Foundation
 ///
 internal class Constants {
     static let BEACON_OPERATION_QUEUE_LABEL = "com.eddystonescanner.queue.blescanner"
-    static let DISPATCH_TIMER_QUEUE_LABEL = "com.eddystonescanner.queue.blescanner"
+    static let DISPATCH_TIMER_QUEUE_LABEL = "com.eddystonescanner.queue.dispatchtimer"
 }

@@ -120,6 +120,8 @@
 		2822368A200B30820028E97F /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				2837EA391FFE04C9007F3D81 /* Beacon.swift */,
+				2822368D200B76B20028E97F /* Telemetry.swift */,
 				28AC744E20061BA400C24E0C /* BeaconID.swift */,
 			);
 			path = Models;
@@ -149,7 +151,6 @@
 			isa = PBXGroup;
 			children = (
 				28D22BBE200763C40053DE96 /* SafeClasses */,
-				2837EA381FFE04C9007F3D81 /* Models */,
 				28AC744D20061B7800C24E0C /* EddystoneRFC */,
 				2837EA371FFE04C8007F3D81 /* EddystoneScanner.swift */,
 				2837EA3B1FFE04C9007F3D81 /* DispatchTimer.swift */,
@@ -167,15 +168,6 @@
 				2837EA241FFE0434007F3D81 /* Info.plist */,
 			);
 			path = EddystoneScannerTests;
-			sourceTree = "<group>";
-		};
-		2837EA381FFE04C9007F3D81 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				2837EA391FFE04C9007F3D81 /* Beacon.swift */,
-				2822368D200B76B20028E97F /* Telemetry.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		2837EA451FFE0696007F3D81 /* SampleApp */ = {
