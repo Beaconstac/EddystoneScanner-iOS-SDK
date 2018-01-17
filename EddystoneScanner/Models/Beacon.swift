@@ -18,8 +18,9 @@ public class Beacon {
     public var rssi: Int
     public var lastSeen: Date = Date()
     
-    public var telemetryData: Data?
     public var eddystoneURL: URL?
+    
+    public var telemetry: Telemetry?
     
     private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int) {
         self.identifier = identifier
@@ -77,7 +78,9 @@ public class Beacon {
      - Parameter rssi: The current RSSI value of the beacon.
      */
     internal func updateBeacon(telemetryData: Data?, eddystoneURL: URL?, rssi: Int) {
-        self.telemetryData = telemetryData
+        if let telemetryData = telemetryData {
+            self.telemetry = Telemetry(tlmFrameData: telemetryData)
+        }
         self.eddystoneURL = eddystoneURL
         self.rssi = rssi
         self.lastSeen = Date()
