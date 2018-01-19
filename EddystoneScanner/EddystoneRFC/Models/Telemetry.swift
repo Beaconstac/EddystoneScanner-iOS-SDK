@@ -31,14 +31,14 @@ public struct Telemetry {
     
     /// Calculates the advertising interval of the beacon in milliseconds
     /// Assumes the beacon is transmitting all 3 eddystone packets (UID, URL and TLM frames)
-    public lazy var advInt: Float {
+    public var advInt: Float {
         guard let uptime = self.uptime,
             let advCount = self.advCount else {
                 return 0
         }
         
         let numberOFFramesPerBeacon = 3
-        return (numberOFFramesPerBeacon * 1000) / (Float(advCount) / uptime)
+        return Float(numberOFFramesPerBeacon * 1000) / (Float(advCount) / uptime)
     }
     
     internal init?(tlmFrameData: Data) {
