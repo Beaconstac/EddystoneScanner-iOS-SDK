@@ -24,6 +24,9 @@ public class Beacon {
     /// RSSI value of the beacon. Can be used to determine how far away the beacon is from the device
     public var rssi: Int
     
+    /// Filtered RSSI value of the beacon using kalman filter
+    public var filterredRSSI: Int
+    
     /// Timestamp when the device recieved a packet from the beacon. Can be any one of URL, UID/EID or the TLM frames
     public var lastSeen: Date = Date()
     
@@ -33,11 +36,15 @@ public class Beacon {
     /// Telemtry data from the beacon. Always updated to the latest value
     public var telemetry: Telemetry?
     
+    /// Kalman filter
+    private let kalmanFilter = KalmanFilter(r: Constants.KALMAN_FILTER_PROCESS_NOISE, q: Constants.KALMAN_FILTER_MEASUREMENT_NOISE)
+    
     private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int) {
         self.identifier = identifier
         self.beaconID = beaconID
         self.txPower = txPower
         self.rssi = rssi
+        self.filterredRSSI = Int(self.kalmanFilter.filter(Float(rssi)))
     }
     
     /**
@@ -90,6 +97,7 @@ public class Beacon {
      */
     internal func updateBeacon(telemetryData: Data?, eddystoneURL: URL?, rssi: Int) {
         self.rssi = rssi
+        self.filterredRSSI = Int(self.kalmanFilter.filter(Float(rssi)))
         self.lastSeen = Date()
         
         if let eddystoneURL = eddystoneURL {
