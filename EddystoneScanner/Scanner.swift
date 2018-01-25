@@ -1,5 +1,5 @@
 //
-//  BeaconScanner.swift
+//  Scanner.swift
 //  EddystoneScanner
 //
 //  Created by Amit Prabhu on 27/11/17.
@@ -9,7 +9,7 @@
 import CoreBluetooth
 
 ///
-/// EddystoneScannerDelegate
+/// ScannerDelegate
 ///
 /// Implement this to receive notifications about beacons discovered in proximity.
 public protocol ScannerDelegate {
@@ -19,7 +19,7 @@ public protocol ScannerDelegate {
 }
 
 ///
-/// EddystoneScanner
+/// Scanner
 ///
 /// Scans for Eddystone compliant beacons using Core Bluetooth. To receive notifications of any
 /// sighted beacons, be sure to implement BeaconScannerDelegate and set that on the scanner.
