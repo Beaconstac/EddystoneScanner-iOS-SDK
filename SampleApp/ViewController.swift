@@ -13,6 +13,7 @@ import UserNotifications
 class ViewController: UIViewController {
     
     let scanner = EddystoneScanner.Scanner()
+    var timer : Timer?
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -32,6 +33,25 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTableView), userInfo: nil, repeats: true)
+    }
+    
+    @objc func updateTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        timer?.invalidate()
+        timer = nil
+    }
 
 
 }
@@ -44,8 +64,7 @@ extension ViewController: UITableViewDataSource {
         
         let beacon = nearbyBeacons[index]
         let cell = tableView.dequeueReusableCell(withIdentifier: BeaconTableViewCell.cellIdentifier) as! BeaconTableViewCell
-        cell.beaconName.text = beacon.beaconID.description
-        cell.eddystoneURL.text = beacon.eddystoneURL?.absoluteString
+        cell.configureCell(for: beacon)
         return cell
         
     }
@@ -75,25 +94,15 @@ extension ViewController: ScannerDelegate {
     // MARK: EddystoneScannerDelegate callbacks
     func didFindBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
         debugPrint("Found beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
     }
     
     func didLoseBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
         debugPrint("Lost beacon ", beacon.description, beacon.eddystoneURL?.absoluteString)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
     }
     
     func didUpdateBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
         guard let eddystoneURL = beacon.eddystoneURL else {
             return
-        }
-        
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
         }
         self.sendLocalNotification(beaconID: beacon.beaconID.description, eddystoneURL: eddystoneURL.absoluteString)
     }
