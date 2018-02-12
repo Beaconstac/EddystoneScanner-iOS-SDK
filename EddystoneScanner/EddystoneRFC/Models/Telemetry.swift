@@ -41,6 +41,16 @@ public struct Telemetry {
         return Float(numberOFFramesPerBeacon * 1000) / (Float(advCount) / uptime)
     }
     
+    /// Battery percentage
+    /// Assume the chip requires a 3V battery. Most of the beacons have Nordic chips which support 3V
+    public var batteryPercentage: UInt? {
+        guard let voltage = self.voltage else {
+            return nil
+        }
+        
+        return UInt((Float(voltage) / 3000.0) * 100)
+    }
+    
     internal init?(tlmFrameData: Data) {
         guard let frameBytes = Telemetry.validateTLMFrameData(tlmFrameData: tlmFrameData) else {
             debugPrint("Failed to iniatialize the telemtry object")
