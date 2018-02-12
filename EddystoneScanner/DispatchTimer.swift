@@ -12,7 +12,7 @@ import Foundation
 /// DispatchTimerDelegate
 ///
 /// Implement this to receive callbacks when the timer is called
-public protocol DispatchTimerDelegate {
+@objc public protocol DispatchTimerDelegate {
     func timerCalled(timer: DispatchTimer?)
 }
 
@@ -21,7 +21,7 @@ public protocol DispatchTimerDelegate {
 ///
 /// Timer class to create a background timer on a queue
 ///
-public class DispatchTimer {
+public class DispatchTimer: NSObject {
     
     // MARK: Public properties
     /// Interval to run the timer
@@ -38,6 +38,8 @@ public class DispatchTimer {
         sourceTimer = DispatchSource.makeTimerSource(queue: queue)
         
         self.repeatingInterval = repeatingInterval
+        
+        super.init()
     }
     
     /// Start the timer

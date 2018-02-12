@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 /// Main Beacon class
-public class Beacon {
+@objc public class Beacon: NSObject {
     
     /// UUID identifier of the beacon
     public let identifier: UUID
@@ -45,6 +45,8 @@ public class Beacon {
         self.txPower = txPower
         self.rssi = rssi
         self.filterredRSSI = Int(self.kalmanFilter.filter(Float(rssi)))
+        
+        super.init()
     }
     
     /**
@@ -118,23 +120,16 @@ public class Beacon {
     }
 }
 
-extension Beacon: CustomStringConvertible {
+extension Beacon {
     // MARK: CustomStringConvertible protocol requirements
-    public var description: String {
+    override public var description: String {
         return self.beaconID.description
     }
 }
 
-extension Beacon: Equatable {
-    // MARK: Equatable protocol requirements
-    public static func == (lhs: Beacon, rhs: Beacon) -> Bool {
-        return lhs.beaconID == rhs.beaconID
-    }
-}
-
-extension Beacon: Hashable {
+extension Beacon {
     // MARK: Hashable protocol requirements
-    public var hashValue: Int {
+    override public var hashValue: Int {
         get {
             return self.description.hashValue
         }
