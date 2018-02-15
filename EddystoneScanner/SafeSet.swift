@@ -23,9 +23,12 @@ public class SafeSet<E: Hashable> {
         queue = DispatchQueue(label: "com.safeset.\(Date().timeIntervalSince1970).\(identifier)", attributes: .concurrent)
     }
     
-    public subscript(index: Set<E>.Index) -> E {
+    public subscript(index: Set<E>.Index) -> E? {
         get {
             return queue.sync {
+                guard set.indices.contains(index) else {
+                    return nil
+                }
                 return set[index]
             }
         }

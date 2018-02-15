@@ -134,7 +134,10 @@ extension Scanner: CBCentralManagerDelegate {
         
         // Save the changing beacon data into the beacon object
         let telemetryData = Eddystone.telemetryDataForFrame(advertisementFrameList: serviceData)
-        let beacon = self.nearbyBeacons[index]
+        guard let beacon = self.nearbyBeacons[index] else {
+            return
+        }
+        
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
@@ -159,7 +162,10 @@ extension Scanner: CBCentralManagerDelegate {
         }
         
         // Beacon already discovered. Update rssi and last seen value of the beacon
-        let beacon = self.nearbyBeacons[index]
+        guard let beacon = self.nearbyBeacons[index] else {
+            return
+        }
+        
         beacon.updateBeacon(telemetryData: nil, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
@@ -178,7 +184,10 @@ extension Scanner: CBCentralManagerDelegate {
         }
         
         // Update the beacon object
-        let beacon = self.nearbyBeacons[index]
+        guard let beacon = self.nearbyBeacons[index] else {
+            return
+        }
+        
         beacon.updateBeacon(telemetryData: nil, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
