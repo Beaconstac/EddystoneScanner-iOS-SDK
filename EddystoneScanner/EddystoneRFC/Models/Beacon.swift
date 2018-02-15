@@ -10,34 +10,34 @@ import Foundation
 import CoreBluetooth
 
 /// Main Beacon class
-public class Beacon {
+@objc public class Beacon: NSObject {
     
     /// Beacon name as found in the CBPeriferal object
-    public let name: String?
+    @objc public let name: String?
     
     /// UUID identifier of the beacon
-    public let identifier: UUID
+    @objc public let identifier: UUID
     
     /// BeaconID - unique for each beacon as per Eddystone RFC
-    public let beaconID: BeaconID
+    @objc public let beaconID: BeaconID
     
     /// Transmission power of the beacon
-    public let txPower: Int
+    @objc public let txPower: Int
     
     /// RSSI value of the beacon. Can be used to determine how far away the beacon is from the device
-    public var rssi: Int
+    @objc public var rssi: Int
     
     /// Filtered RSSI value of the beacon using kalman filter
-    public var filterredRSSI: Int
+    @objc public var filterredRSSI: Int
     
     /// Timestamp when the device recieved a packet from the beacon. Can be any one of URL, UID/EID or the TLM frames
-    public var lastSeen: Date = Date()
+    @objc public var lastSeen: Date = Date()
     
     /// Eddystone URL being broadcasted by the beacon
-    public var eddystoneURL: URL?
+    @objc public var eddystoneURL: URL?
     
     /// Telemtry data from the beacon. Always updated to the latest value
-    public var telemetry: Telemetry?
+    @objc public var telemetry: Telemetry?
     
     /// Kalman filter
     private let kalmanFilter = KalmanFilter(r: Constants.KALMAN_FILTER_PROCESS_NOISE, q: Constants.KALMAN_FILTER_MEASUREMENT_NOISE)
@@ -49,6 +49,8 @@ public class Beacon {
         self.txPower = txPower
         self.rssi = rssi
         self.filterredRSSI = Int(self.kalmanFilter.filter(Float(rssi)))
+        
+        super.init()
     }
     
     /**
@@ -122,23 +124,23 @@ public class Beacon {
     }
 }
 
-extension Beacon: CustomStringConvertible {
+extension Beacon {
     // MARK: CustomStringConvertible protocol requirements
-    public var description: String {
+    override public var description: String {
         return self.beaconID.description
     }
 }
 
-extension Beacon: Equatable {
+extension Beacon {
     // MARK: Equatable protocol requirements
     public static func == (lhs: Beacon, rhs: Beacon) -> Bool {
         return lhs.beaconID == rhs.beaconID
     }
 }
 
-extension Beacon: Hashable {
+extension Beacon {
     // MARK: Hashable protocol requirements
-    public var hashValue: Int {
+    override public var hashValue: Int {
         get {
             return self.description.hashValue
         }

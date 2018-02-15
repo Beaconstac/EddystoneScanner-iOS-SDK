@@ -12,10 +12,10 @@ import CoreBluetooth
 /// ScannerDelegate
 ///
 /// Implement this to receive notifications about beacons discovered in proximity.
-public protocol ScannerDelegate {
-    func didFindBeacon(scanner: Scanner, beacon: Beacon)
-    func didLoseBeacon(scanner: Scanner, beacon: Beacon)
-    func didUpdateBeacon(scanner: Scanner, beacon: Beacon)
+@objc public protocol ScannerDelegate {
+    @objc func didFindBeacon(scanner: Scanner, beacon: Beacon)
+    @objc func didLoseBeacon(scanner: Scanner, beacon: Beacon)
+    @objc func didUpdateBeacon(scanner: Scanner, beacon: Beacon)
 }
 
 ///
@@ -24,10 +24,10 @@ public protocol ScannerDelegate {
 /// Scans for Eddystone compliant beacons using Core Bluetooth. To receive notifications of any
 /// sighted beacons, be sure to implement BeaconScannerDelegate and set that on the scanner.
 ///
-public class Scanner: NSObject {
+@objc public class Scanner: NSObject {
     
     /// Scanner Delegate
-    public var delegate: ScannerDelegate?
+    @objc public var delegate: ScannerDelegate?
     
     /// Beacons that are close to the device.
     /// Keeps getting updated. Beacons are removed periodically when no packets are recieved in a 10 second interval
@@ -53,7 +53,7 @@ public class Scanner: NSObject {
     ///
     /// Start scanning. If Core Bluetooth isn't ready for us just yet, then waits and THEN starts scanning
     ///
-    public func startScanning() {
+    @objc public func startScanning() {
         self.beaconOperationsQueue.async { [weak self] in
             self?.startScanningSynchronized()
             self?.timer?.startTimer()
@@ -63,7 +63,7 @@ public class Scanner: NSObject {
     ///
     /// Stops scanning for beacons
     ///
-    public func stopScanning() {
+    @objc public func stopScanning() {
         self.beaconOperationsQueue.async { [weak self] in
             self?.centralManager.stopScan()
             self?.timer?.stopTimer()

@@ -24,7 +24,7 @@ public enum BeaconType {
 ///
 /// Uniquely identifies an Eddystone compliant beacon.
 ///
-public struct BeaconID {
+@objc public class BeaconID: NSObject {
     
     public let beaconType: BeaconType
     
@@ -32,26 +32,26 @@ public struct BeaconID {
     /// unique 16-byte Beacon ID composed of a 10-byte namespace and a 6-byte instance
     /// Get hexString by doing beaconID.hexString
     ///
-    public let beaconID: [UInt8]
+    @objc public let beaconID: [UInt8]
     
     ///
     /// 10 byte raw namespace data
     ///
-    public var namespace: ArraySlice<UInt8> {
-        return beaconID[..<10]
+    @objc public var namespace: Array<UInt8> {
+        return Array(beaconID[..<10])
     }
     
     ///
     /// 6 byte raw namespace data
     ///
-    public var instance: ArraySlice<UInt8> {
-        return beaconID[10..<16]
+    @objc public var instance: Array<UInt8> {
+        return Array(beaconID[10..<16])
     }
     
     ///
     /// Base64 encoded string of the byte beacon ID data
     ///
-    public var beaconAdvertisedId: String {
+    @objc public var beaconAdvertisedId: String {
         return beaconID.data.base64EncodedString()
     }
     
@@ -64,18 +64,20 @@ public struct BeaconID {
     internal init(beaconType: BeaconType, beaconID: [UInt8]) {
         self.beaconID = beaconID
         self.beaconType = beaconType
+        
+        super.init()
     }
 }
 
 
-extension BeaconID: CustomStringConvertible {
+extension BeaconID {
     // MARK: CustomStringConvertible protocol requirments
-    public var description: String {
+    override public var description: String {
         return beaconID.hexString
     }
 }
 
-extension BeaconID: Equatable {
+extension BeaconID {
     // MARK: Equatable protocol requirments
     public static func == (lhs: BeaconID, rhs: BeaconID) -> Bool {
         return lhs.beaconID == rhs.beaconID &&
