@@ -153,7 +153,7 @@ extension Scanner: CBCentralManagerDelegate {
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
             // Newly discovered beacon. Create a new beacon object
             let beaconServiceData = serviceData[Eddystone.ServiceUUID] as? Data
-            guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue) else {
+            guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue, name: peripheral.name) else {
                 return
             }
             

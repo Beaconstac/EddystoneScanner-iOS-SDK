@@ -12,6 +12,9 @@ import CoreBluetooth
 /// Main Beacon class
 public class Beacon {
     
+    /// Beacon name as found in the CBPeriferal object
+    public let name: String?
+    
     /// UUID identifier of the beacon
     public let identifier: UUID
     
@@ -39,7 +42,8 @@ public class Beacon {
     /// Kalman filter
     private let kalmanFilter = KalmanFilter(r: Constants.KALMAN_FILTER_PROCESS_NOISE, q: Constants.KALMAN_FILTER_MEASUREMENT_NOISE)
     
-    private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int) {
+    private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int, name: String?) {
+        self.name = name
         self.identifier = identifier
         self.beaconID = beaconID
         self.txPower = txPower
@@ -54,7 +58,7 @@ public class Beacon {
      - Parameter telemetry: The telemetry data obtained from Beacon.telemetryDataForFrame. Optional.
      - Parameter rssi: The RSSI value of the beacon.
      */
-    convenience internal init?(identifier: UUID, frameData: Data?, rssi: Int) {
+    convenience internal init?(identifier: UUID, frameData: Data?, rssi: Int, name: String?) {
         guard let frameData = frameData, frameData.count > 1 else {
             return nil
         }
@@ -85,7 +89,7 @@ public class Beacon {
                                     beaconID: Array(frameBytes[2..<10]))
         }
         
-        self.init(identifier: identifier, beaconID: beaconID, txPower: txPower, rssi: rssi)
+        self.init(identifier: identifier, beaconID: beaconID, txPower: txPower, rssi: rssi, name: name)
     }
     
     /**
