@@ -54,7 +54,6 @@ public class DispatchTimer: NSObject {
     /// Stop the timer
     public func stopTimer() {
         self.sourceTimer?.cancel()
-        self.sourceTimer = nil
     }
     
 }

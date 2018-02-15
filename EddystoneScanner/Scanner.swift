@@ -66,6 +66,7 @@ import CoreBluetooth
     public func stopScanning() {
         self.beaconOperationsQueue.async { [weak self] in
             self?.centralManager.stopScan()
+            self?.timer?.stopTimer()
         }
     }
     
