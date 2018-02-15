@@ -19,5 +19,5 @@ internal class Constants {
     
     // Kalman filter constants
     static let KALMAN_FILTER_PROCESS_NOISE: Float = 0.008
-    static let KALMAN_FILTER_MEASUREMENT_NOISE: Float = 0.02
+    static let KALMAN_FILTER_MEASUREMENT_NOISE: Float = 1.0
 }
