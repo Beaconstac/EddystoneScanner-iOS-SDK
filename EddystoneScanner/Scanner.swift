@@ -12,7 +12,7 @@ import CoreBluetooth
 /// ScannerDelegate
 ///
 /// Implement this to receive notifications about beacons discovered in proximity.
-@objc public protocol ScannerDelegate {
+public protocol ScannerDelegate {
     func didFindBeacon(scanner: Scanner, beacon: Beacon)
     func didLoseBeacon(scanner: Scanner, beacon: Beacon)
     func didUpdateBeacon(scanner: Scanner, beacon: Beacon)
@@ -24,7 +24,7 @@ import CoreBluetooth
 /// Scans for Eddystone compliant beacons using Core Bluetooth. To receive notifications of any
 /// sighted beacons, be sure to implement BeaconScannerDelegate and set that on the scanner.
 ///
-@objc public class Scanner: NSObject {
+public class Scanner: NSObject {
     
     /// Scanner Delegate
     public var delegate: ScannerDelegate?
