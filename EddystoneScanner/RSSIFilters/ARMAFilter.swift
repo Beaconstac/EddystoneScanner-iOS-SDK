@@ -34,11 +34,15 @@ internal class ArmaFilter: RSSIFilterDelegate {
     }
     
     internal func calculate(forRSSI rssi: Int) {
-        guard let x = filteredRSSI else {
-            filteredRSSI = rssi
+        guard rssi < 0 else {
             return
         }
-        filteredRSSI = Int(Float(x) - sArmaCoefficient * Float(x - rssi))
+        
+        if let x = filteredRSSI {
+            filteredRSSI = Int(Float(x) - sArmaCoefficient * Float(x - rssi))
+            return
+        }
+        filteredRSSI = rssi
     }
 }
 
