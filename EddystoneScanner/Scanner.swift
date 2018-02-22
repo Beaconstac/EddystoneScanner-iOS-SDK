@@ -86,7 +86,7 @@ import CoreBluetooth
             self.shouldBeScanning = true
         }
         else {
-            debugPrint("Starting to scan for Eddystones")
+            debugPrint("Starting scan for Eddystone beacons")
             let services = [CBUUID(string: "FEAA")]
             let options = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
             self.centralManager.scanForPeripherals(withServices: services, options: options)
@@ -123,7 +123,7 @@ extension Scanner: CBCentralManagerDelegate {
             self.handleURLFrame(peripheral: peripheral, serviceData: serviceData, RSSI: RSSI)
             
         default:
-            debugPrint("Unable to find service data; can't process Eddystone")
+            debugPrint("Unable to find service data. can't process Eddystone")
         }
     }
     
@@ -134,7 +134,6 @@ extension Scanner: CBCentralManagerDelegate {
                                      RSSI: NSNumber) {
         
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
-            debugPrint("Beacon UID frame not yet discovered")
             return
         }
         
@@ -185,7 +184,6 @@ extension Scanner: CBCentralManagerDelegate {
         
         let eddystoneURL = Eddystone.parseURLFromFrame(advertisementFrameList: serviceData)
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
-            debugPrint("Beacon UID frame not yet discovered")
             return
         }
         

@@ -97,14 +97,16 @@ import CoreBluetooth
         
         let beaconID: BeaconID
         if frameByte == Eddystone.EddystoneUIDFrameTypeID {
-            if frameBytes.count < 18 {
+            guard frameBytes.count >= 18 else {
                 debugPrint("Frame Data for UID Frame unexpectedly truncated.")
+                return nil
             }
             beaconID = BeaconID(beaconType: .eddystone,
                                     beaconID: Array(frameBytes[2..<18]))
         } else {
-            if frameBytes.count < 10 {
+            guard frameBytes.count >= 10 else {
                 debugPrint("Frame Data for EID Frame unexpectedly truncated.")
+                return nil
             }
             beaconID = BeaconID(beaconType: .eddystoneEID,
                                     beaconID: Array(frameBytes[2..<10]))
