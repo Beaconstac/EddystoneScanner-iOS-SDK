@@ -40,7 +40,7 @@ import CoreBluetooth
     @objc public var telemetry: Telemetry?
     
     /// Kalman filter
-    private let kalmanFilter = KalmanFilter(r: Constants.KALMAN_FILTER_PROCESS_NOISE, q: Constants.KALMAN_FILTER_MEASUREMENT_NOISE)
+    private let filter = RSSIFilter(.Arma, processNoise: 0.15, mesaurementNoise: -100)
     
     private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int, name: String?) {
         self.name = name
@@ -48,7 +48,8 @@ import CoreBluetooth
         self.beaconID = beaconID
         self.txPower = txPower
         self.rssi = rssi
-        self.filterredRSSI = Int(self.kalmanFilter.filter(Float(rssi)))
+        filter.onRange(Float(rssi))
+        self.filterredRSSI = Int(filter.calculateRSSI())
         
         super.init()
     }
@@ -103,7 +104,8 @@ import CoreBluetooth
      */
     internal func updateBeacon(telemetryData: Data?, eddystoneURL: URL?, rssi: Int) {
         self.rssi = rssi
-        self.filterredRSSI = Int(self.kalmanFilter.filter(Float(rssi)))
+        filter.onRange(Float(rssi))
+        self.filterredRSSI = Int(filter.calculateRSSI())
         self.lastSeen = Date()
         
         if let eddystoneURL = eddystoneURL {
