@@ -8,37 +8,37 @@
 
 import Foundation
 
-// https://github.com/AltBeacon/android-beacon-library/blob/master/src/main/java/org/altbeacon/beacon/service/ArmaRssiFilter.java
-
-class ArmaFilter: SignalFilter {
+///
+/// ArmaFilter
+///
+/// This filter calculates its rssi on base of an auto regressive moving average (ARMA)
+/// It needs only the current value to do this;
+/// the general formula is  n(t) = n(t-1) - c * (n(t-1) - n(t))
+/// where c is a coefficient, that denotes the smoothness - the lower the value, the smoother the average
+/// Note: a smoother average needs longer to "settle down"
+/// Note: For signals, that change rather frequently (say, 1Hz or faster) and tend to vary more a recommended value would be 0,1 (that means the actual value is changed by 10% of the difference between the actual measurement and the actual average)
+/// For signals at lower rates (10Hz) a value of 0.25 to 0.5 would be appropriate
+////
+internal class ArmaFilter: RSSIFilterDelegate {
     
-    var filterType: FilterType
-    let sArmaCoefficient: Float
+    /// Stores the filter type
+    internal let filterType: RSSIFilterType = .arma
     
-    var filteredRSSI: Float
+    /// Filtered RSSI value
+    internal var filteredRSSI: Int?
     
-    required init(_ filterType: FilterType, processNoise: Float, mesaurementNoise: Float) {
+    private let sArmaCoefficient: Float
+    
+    required init(processNoise: Float, mesaurementNoise _: Float) {
         sArmaCoefficient = processNoise
-        filteredRSSI = mesaurementNoise
-        self.filterType = filterType
     }
     
-    func onRange(_ rssi: Float) {
-        if Int(filteredRSSI) == BAD_SIG {
-            filteredRSSI = rssi == 0 ? Float(BAD_SIG) : rssi
+    internal func calculate(forRSSI rssi: Int) {
+        guard let x = filteredRSSI else {
+            filteredRSSI = rssi
+            return
         }
-        if rssi == 0 {
-        } else {
-            filteredRSSI = filteredRSSI - sArmaCoefficient * (filteredRSSI - rssi)
-        }
-    }
-    
-    func onOutOfRange() {
-        filteredRSSI = Float(BAD_SIG)
-    }
-    
-    func calculateRSSI() -> Float {
-        return filteredRSSI
+        filteredRSSI = Int(Float(x) - sArmaCoefficient * Float(x - rssi))
     }
 }
 

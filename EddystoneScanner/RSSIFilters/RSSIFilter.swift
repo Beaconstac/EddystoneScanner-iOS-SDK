@@ -8,47 +8,30 @@
 
 import Foundation
 
-let BAD_SIG = -100;
-
-enum FilterType {
-    case Kalman
-    case Arma
+///
+/// FilterType
+///
+/// Enum to define the filter to use
+@objc public enum RSSIFilterType: Int {
+    case kalman
+    case arma
 }
 
-protocol SignalFilter {
-    var filterType: FilterType {get}
-    init(_ filterType: FilterType, processNoise: Float, mesaurementNoise: Float)
-    func onRange(_ rssi: Float)
-    func onOutOfRange()
-    func calculateRSSI() -> Float
+///
+/// RSSIFilterDelegate
+///
+/// RSSI signal filter protocol that all filters need to conform to
+///
+internal protocol RSSIFilterDelegate {
+    /// Defines the filter type
+    var filterType: RSSIFilterType { get }
+    
+    /// Filtered RSSI value
+    var filteredRSSI: Int? { get }
+    
+    /// Required initialiser
+    init(processNoise: Float, mesaurementNoise: Float)
+    
+    /// Function to filter RSSI on current signal
+    func calculate(forRSSI rssi: Int)
 }
-
-class RSSIFilter: SignalFilter {
-    
-    var filterType: FilterType {
-        return _filter.filterType
-    }
-    
-    private var _filter: SignalFilter
-    
-    required init(_ filterType: FilterType, processNoise: Float, mesaurementNoise: Float) {
-        if filterType == .Arma {
-            _filter = ArmaFilter(filterType, processNoise: processNoise, mesaurementNoise: mesaurementNoise)
-        } else {
-            _filter = KalmanFilter(filterType, processNoise: processNoise, mesaurementNoise: mesaurementNoise)
-        }
-    }
-    
-    func onRange(_ rssi: Float) {
-        _filter.onRange(rssi)
-    }
-    
-    func onOutOfRange() {
-        _filter.onOutOfRange()
-    }
-    
-    func calculateRSSI() -> Float {
-        return _filter.calculateRSSI()
-    }
-}
-

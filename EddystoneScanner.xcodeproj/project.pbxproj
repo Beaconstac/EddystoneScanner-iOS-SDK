@@ -153,11 +153,11 @@
 			isa = PBXGroup;
 			children = (
 				28AC744D20061B7800C24E0C /* EddystoneRFC */,
+				5426861C203EB209004BF234 /* RSSIFilters */,
 				2837EA371FFE04C8007F3D81 /* Scanner.swift */,
 				28D22BBC2007629C0053DE96 /* SafeSet.swift */,
 				2837EA3B1FFE04C9007F3D81 /* DispatchTimer.swift */,
 				28AC7450200628FD00C24E0C /* Constants.swift */,
-				5426861C203EB209004BF234 /* RSSIFilter */,
 				2837EA171FFE0434007F3D81 /* EddystoneScanner.h */,
 				2837EA181FFE0434007F3D81 /* Info.plist */,
 			);
@@ -197,14 +197,14 @@
 			path = EddystoneRFC;
 			sourceTree = "<group>";
 		};
-		5426861C203EB209004BF234 /* RSSIFilter */ = {
+		5426861C203EB209004BF234 /* RSSIFilters */ = {
 			isa = PBXGroup;
 			children = (
 				5426861A203EB201004BF234 /* RSSIFilter.swift */,
 				284B233E201A529D001E7259 /* KalmanFilter.swift */,
 				5426861D203EB278004BF234 /* ARMAFilter.swift */,
 			);
-			path = RSSIFilter;
+			path = RSSIFilters;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

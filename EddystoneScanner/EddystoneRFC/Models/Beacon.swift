@@ -27,29 +27,43 @@ import CoreBluetooth
     /// RSSI value of the beacon. Can be used to determine how far away the beacon is from the device
     @objc public var rssi: Int
     
-    /// Filtered RSSI value of the beacon using kalman filter
-    @objc public var filterredRSSI: Int
-    
-    /// Timestamp when the device recieved a packet from the beacon. Can be any one of URL, UID/EID or the TLM frames
+    /// Timestamp when the device recieved a packet from the beacon.
+    /// Can be any one of URL, UID/EID or the TLM frames
     @objc public var lastSeen: Date = Date()
     
     /// Eddystone URL being broadcasted by the beacon
     @objc public var eddystoneURL: URL?
     
+    /// Filtered RSSI value based on the filter type specified
+    @objc public var filteredRSSI: Int {
+        get {
+            return self.filter.filteredRSSI ?? 0
+        }
+    }
+    
     /// Telemtry data from the beacon. Always updated to the latest value
     @objc public var telemetry: Telemetry?
     
     /// Kalman filter
-    private let filter = RSSIFilter(.Arma, processNoise: 0.15, mesaurementNoise: -100)
+    private let filter: RSSIFilterDelegate
     
-    private init(identifier: UUID, beaconID: BeaconID, txPower: Int, rssi: Int, name: String?) {
+    private init(identifier: UUID,
+                 beaconID: BeaconID,
+                 txPower: Int,
+                 rssi: Int,
+                 name: String?,
+                 filterType: RSSIFilterType) {
         self.name = name
         self.identifier = identifier
         self.beaconID = beaconID
         self.txPower = txPower
         self.rssi = rssi
-        filter.onRange(Float(rssi))
-        self.filterredRSSI = Int(filter.calculateRSSI())
+        
+        if filterType == .arma {
+            self.filter = ArmaFilter(processNoise: Constants.ARMA_FILTER_PROCESS_NOISE, mesaurementNoise:Constants.ARMA_FILTER_MEASUREMENT_NOISE)
+        } else {
+            self.filter = KalmanFilter(processNoise: Constants.KALMAN_FILTER_PROCESS_NOISE, mesaurementNoise:Constants.KALMAN_FILTER_MEASUREMENT_NOISE)
+        }
         
         super.init()
     }
@@ -61,7 +75,11 @@ import CoreBluetooth
      - Parameter telemetry: The telemetry data obtained from Beacon.telemetryDataForFrame. Optional.
      - Parameter rssi: The RSSI value of the beacon.
      */
-    convenience internal init?(identifier: UUID, frameData: Data?, rssi: Int, name: String?) {
+    convenience internal init?(identifier: UUID,
+                               frameData: Data?,
+                               rssi: Int,
+                               name: String?,
+                               filterType: RSSIFilterType) {
         guard let frameData = frameData, frameData.count > 1 else {
             return nil
         }
@@ -92,7 +110,12 @@ import CoreBluetooth
                                     beaconID: Array(frameBytes[2..<10]))
         }
         
-        self.init(identifier: identifier, beaconID: beaconID, txPower: txPower, rssi: rssi, name: name)
+        self.init(identifier: identifier,
+                  beaconID: beaconID,
+                  txPower: txPower,
+                  rssi: rssi,
+                  name: name,
+                  filterType: filterType)
     }
     
     /**
@@ -104,8 +127,7 @@ import CoreBluetooth
      */
     internal func updateBeacon(telemetryData: Data?, eddystoneURL: URL?, rssi: Int) {
         self.rssi = rssi
-        filter.onRange(Float(rssi))
-        self.filterredRSSI = Int(filter.calculateRSSI())
+        self.filter.calculate(forRSSI: rssi)
         self.lastSeen = Date()
         
         if let eddystoneURL = eddystoneURL {

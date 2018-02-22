@@ -53,7 +53,7 @@ class BeaconTableViewCell: UITableViewCell {
     }
     
     internal func configureCell(for beacon: Beacon) {
-        self.rssi.text = "\(beacon.filterredRSSI) dBM"
+        self.rssi.text = "\(beacon.filteredRSSI) dBM"
         self.beaconName.text = beacon.name ?? ""
         
         var batteryAmount: Float = 0

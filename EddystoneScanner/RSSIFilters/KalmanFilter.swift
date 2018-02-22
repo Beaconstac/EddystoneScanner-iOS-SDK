@@ -13,11 +13,13 @@ import Foundation
 ///
 /// Implements the Kalman filter as described wonderfully by
 /// Wouter Bulten @ https://www.wouterbulten.nl/blog/tech/kalman-filters-explained-removing-noise-from-rssi-signals/
-internal class KalmanFilter: SignalFilter {
+internal class KalmanFilter: RSSIFilterDelegate {
+
+    /// Stores the filter type
+    internal let filterType: RSSIFilterType = .kalman
     
-    var filterType: FilterType
-    
-    private var _filteredRSSI: Float?
+    /// Filtered RSSI value
+    internal var filteredRSSI: Int?
     
     /// Process noise
     private let R: Float
@@ -42,8 +44,7 @@ internal class KalmanFilter: SignalFilter {
     /**
      * Create 1-dimensional kalman filter
      */
-    required init(_ filterType: FilterType, processNoise: Float, mesaurementNoise: Float) {
-        self.filterType = .Kalman
+    internal required init(processNoise: Float, mesaurementNoise: Float) {
         self.R = processNoise
         self.Q = mesaurementNoise
         self.A = 1
@@ -52,35 +53,26 @@ internal class KalmanFilter: SignalFilter {
     }
     
     /**
-     Filters the data based on kalman filter algorithm
+     Calculates the filterred RSSI for incoming RSSI value
      
      - Parameter z: The incoming data
-     - Parameter u: Control
      */
-    func onRange(_ rssi: Float) {
-        guard let x = _filteredRSSI else {
-            self._filteredRSSI = (1 / self.C) * rssi
+    internal func calculate(forRSSI rssi: Int) {
+        guard let x = filteredRSSI else {
+            self.filteredRSSI = Int((1 / self.C) * Float(rssi))
             self.cov = (1 / self.C) * self.Q * (1 / self.C)
             return
         }
         
         // Compute prediction
-        let predX = (self.A * x) + (self.B * 0)
+        let predX = (self.A * Float(x)) + (self.B * 0)
         let predCov = ((self.A * self.cov) * self.A) + self.R
         
         // Kalman gain
         let K = predCov * self.C * (1 / ((self.C * predCov * self.C) + self.Q))
         
         // Correction
-        self.x = predX + K * (rssi - (self.C * predX))
+        self.x = predX + K * (Float(rssi) - (self.C * predX))
         self.cov = predCov - (K * self.C * predCov)
-    }
-    
-    func onOutOfRange() {
-        _filteredRSSI = nil
-    }
-    
-    func calculateRSSI() -> Float {
-        return _filteredRSSI ?? 0
     }
 }

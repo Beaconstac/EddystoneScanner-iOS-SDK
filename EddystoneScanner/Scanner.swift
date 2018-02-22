@@ -33,6 +33,9 @@ import CoreBluetooth
     /// Keeps getting updated. Beacons are removed periodically when no packets are recieved in a 10 second interval
     public var nearbyBeacons = SafeSet<Beacon>(identifier: "nearbyBeacons")
     
+    /// RSSI Filter type used
+    @objc public let rssiFilterType: RSSIFilterType
+    
     private var centralManager: CBCentralManager!
     private let beaconOperationsQueue: DispatchQueue = DispatchQueue(label: Constants.BEACON_OPERATION_QUEUE_LABEL)
     private var shouldBeScanning: Bool = false
@@ -42,7 +45,9 @@ import CoreBluetooth
     
     // MARK: Public functions
     /// Initialises the CBCentralManager for scanning and the DispatchTimer
-    public override init() {
+    public init(rssiFilterType: RSSIFilterType = .arma) {
+        self.rssiFilterType = rssiFilterType
+        
         super.init()
         
         self.centralManager = CBCentralManager(delegate: self, queue: self.beaconOperationsQueue)
@@ -153,7 +158,7 @@ extension Scanner: CBCentralManagerDelegate {
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
             // Newly discovered beacon. Create a new beacon object
             let beaconServiceData = serviceData[Eddystone.ServiceUUID] as? Data
-            guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue, name: peripheral.name) else {
+            guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue, name: peripheral.name, filterType: rssiFilterType) else {
                 return
             }
             
