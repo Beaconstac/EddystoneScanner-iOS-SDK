@@ -19,7 +19,26 @@ import Foundation
 /// Suitable for applications where the device is stationary
 ///
 
-internal class RunningAverage: RSSIFilterDelegate {
+internal class RunningAverageFilter: RSSIFilter {
+    
+    // Measurement struct used by the RunningAverageFilter
+    internal struct Measurement: Comparable, Hashable {
+        
+        var hashValue: Int {
+            return rssi.hashValue ^ timeStamp.hashValue
+        }
+        
+        static func <(lhs: Measurement, rhs: Measurement) -> Bool {
+            return lhs.rssi < rhs.rssi
+        }
+        
+        static func ==(lhs: Measurement, rhs: Measurement) -> Bool {
+            return lhs.rssi == rhs.rssi
+        }
+        
+        var rssi: Int
+        var timeStamp: TimeInterval
+    }
     
     /// Stores the filter type
     internal var filterType: RSSIFilterType
@@ -27,20 +46,20 @@ internal class RunningAverage: RSSIFilterDelegate {
     /// Filtered RSSI value
     internal var filteredRSSI: Int? {
         get {
-            guard let measures = measurements, measures.count > 0 else {
+            guard measurements != nil, measurements.count > 0 else {
                 return nil
             }
-            let size = measures.count
-            var startIndex = measures.startIndex
-            var endIndex = measures.endIndex
+            let size = measurements.count
+            var startIndex = measurements.startIndex
+            var endIndex = measurements.endIndex
             if (size > 2) {
-                startIndex = measures.startIndex + measures.index(measures.startIndex, offsetBy: size / 10 + 1)
-                endIndex = measures.startIndex + measures.index(measures.startIndex, offsetBy: size - size / 10 - 2)
+                startIndex = measurements.startIndex + measurements.index(measurements.startIndex, offsetBy: size / 10 + 1)
+                endIndex = measurements.startIndex + measurements.index(measurements.startIndex, offsetBy: size - size / 10 - 2)
             }
             
             var sum = 0.0
             for i in startIndex..<endIndex {
-                sum += Double(measures[i].rssi)
+                sum += Double(measurements[i].rssi)
             }
             let runningAverage = sum / Double(endIndex - startIndex + 1)
             
@@ -48,9 +67,9 @@ internal class RunningAverage: RSSIFilterDelegate {
         }
     }
     
-    internal var measurements: [Measurement]?
+    internal var measurements: [Measurement]!
     
-    internal required init(processNoise: Float, mesaurementNoise: Float) {
+    internal init() {
         self.filterType = .runningAverage
     }
     
@@ -58,9 +77,9 @@ internal class RunningAverage: RSSIFilterDelegate {
         if measurements == nil {
             measurements = []
         }
-        let measurement = Measurement(rssi, timeStamp: Date().timeIntervalSince1970)
-        measurements?.append(measurement)
+        let measurement = Measurement(rssi: rssi, timeStamp: Date().timeIntervalSince1970)
+        measurements.append(measurement)
         measurements = measurements?.filter({ ($0.timeStamp - Date().timeIntervalSince1970) < 20000 })
-        measurements?.sort(by: { $0 > $1 })
+        measurements.sort(by: { $0 > $1 })
     }
 }

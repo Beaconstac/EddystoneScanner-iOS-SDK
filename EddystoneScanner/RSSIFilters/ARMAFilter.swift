@@ -19,7 +19,7 @@ import Foundation
 /// Note: For signals, that change rather frequently (say, 1Hz or faster) and tend to vary more a recommended value would be 0,1 (that means the actual value is changed by 10% of the difference between the actual measurement and the actual average)
 /// For signals at lower rates (10Hz) a value of 0.25 to 0.5 would be appropriate
 ////
-internal class ArmaFilter: RSSIFilterDelegate {
+internal class ArmaFilter: RSSIFilter {
     
     /// Stores the filter type
     internal let filterType: RSSIFilterType = .arma
@@ -29,8 +29,10 @@ internal class ArmaFilter: RSSIFilterDelegate {
     
     private let sArmaCoefficient: Float
     
-    internal required init(processNoise: Float, mesaurementNoise: Float) {
-        sArmaCoefficient = processNoise
+    private let ARMA_FILTER_PROCESS_NOISE: Float = 0.15
+    
+    internal init() {
+        sArmaCoefficient = ARMA_FILTER_PROCESS_NOISE
     }
     
     internal func calculate(forRSSI rssi: Int) {

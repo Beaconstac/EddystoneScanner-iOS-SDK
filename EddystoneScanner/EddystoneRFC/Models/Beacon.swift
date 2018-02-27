@@ -45,7 +45,7 @@ import CoreBluetooth
     @objc public var telemetry: Telemetry?
     
     /// Kalman filter
-    private let filter: RSSIFilterDelegate
+    private let filter: RSSIFilter
     
     private init(identifier: UUID,
                  beaconID: BeaconID,
@@ -60,11 +60,13 @@ import CoreBluetooth
         self.rssi = rssi
         
         if filterType == .arma {
-            self.filter = ArmaFilter(processNoise: Constants.ARMA_FILTER_PROCESS_NOISE, mesaurementNoise:Constants.ARMA_FILTER_MEASUREMENT_NOISE)
+            self.filter = ArmaFilter()
         } else if filterType == .kalman {
-            self.filter = KalmanFilter(processNoise: Constants.KALMAN_FILTER_PROCESS_NOISE, mesaurementNoise:Constants.KALMAN_FILTER_MEASUREMENT_NOISE)
+            self.filter = KalmanFilter()
+        } else if filterType == .gaussian {
+            self.filter = GaussianFilter()
         } else {
-            self.filter = RunningAverage(processNoise: Constants.RUNNING_AVERAGE_DEFAULT, mesaurementNoise: Constants.RUNNING_AVERAGE_DEFAULT)
+            self.filter = RunningAverageFilter()
         }
         
         super.init()

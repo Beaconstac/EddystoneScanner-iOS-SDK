@@ -28,10 +28,10 @@
 		28AC744F20061BA400C24E0C /* BeaconID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28AC744E20061BA400C24E0C /* BeaconID.swift */; };
 		28AC7451200628FD00C24E0C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28AC7450200628FD00C24E0C /* Constants.swift */; };
 		28D22BBD2007629C0053DE96 /* SafeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28D22BBC2007629C0053DE96 /* SafeSet.swift */; };
+		5407C7F22045502C002732D6 /* GaussianFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5407C7F12045502C002732D6 /* GaussianFilter.swift */; };
 		5426861B203EB201004BF234 /* RSSIFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5426861A203EB201004BF234 /* RSSIFilter.swift */; };
 		5426861E203EB278004BF234 /* ARMAFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5426861D203EB278004BF234 /* ARMAFilter.swift */; };
 		542BC57920442B6A004E56E1 /* RunningAverageFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542BC57820442B6A004E56E1 /* RunningAverageFilter.swift */; };
-		542BC57B20442D43004E56E1 /* Measurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542BC57A20442D43004E56E1 /* Measurement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,10 +90,10 @@
 		28AC744E20061BA400C24E0C /* BeaconID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconID.swift; sourceTree = "<group>"; };
 		28AC7450200628FD00C24E0C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		28D22BBC2007629C0053DE96 /* SafeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeSet.swift; sourceTree = "<group>"; };
+		5407C7F12045502C002732D6 /* GaussianFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaussianFilter.swift; sourceTree = "<group>"; };
 		5426861A203EB201004BF234 /* RSSIFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSIFilter.swift; sourceTree = "<group>"; };
 		5426861D203EB278004BF234 /* ARMAFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARMAFilter.swift; sourceTree = "<group>"; };
 		542BC57820442B6A004E56E1 /* RunningAverageFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningAverageFilter.swift; sourceTree = "<group>"; };
-		542BC57A20442D43004E56E1 /* Measurement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measurement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,7 +208,7 @@
 				284B233E201A529D001E7259 /* KalmanFilter.swift */,
 				5426861D203EB278004BF234 /* ARMAFilter.swift */,
 				542BC57820442B6A004E56E1 /* RunningAverageFilter.swift */,
-				542BC57A20442D43004E56E1 /* Measurement.swift */,
+				5407C7F12045502C002732D6 /* GaussianFilter.swift */,
 			);
 			path = RSSIFilters;
 			sourceTree = "<group>";
@@ -370,12 +370,12 @@
 				2837EA3C1FFE04C9007F3D81 /* Scanner.swift in Sources */,
 				2837EA3D1FFE04C9007F3D81 /* Beacon.swift in Sources */,
 				2822368E200B76B20028E97F /* Telemetry.swift in Sources */,
-				542BC57B20442D43004E56E1 /* Measurement.swift in Sources */,
 				5426861E203EB278004BF234 /* ARMAFilter.swift in Sources */,
 				28D22BBD2007629C0053DE96 /* SafeSet.swift in Sources */,
 				28AC744F20061BA400C24E0C /* BeaconID.swift in Sources */,
 				2822368C200B6FED0028E97F /* Util.swift in Sources */,
 				2837EA3F1FFE04C9007F3D81 /* DispatchTimer.swift in Sources */,
+				5407C7F22045502C002732D6 /* GaussianFilter.swift in Sources */,
 				542BC57920442B6A004E56E1 /* RunningAverageFilter.swift in Sources */,
 				28AC7451200628FD00C24E0C /* Constants.swift in Sources */,
 			);
