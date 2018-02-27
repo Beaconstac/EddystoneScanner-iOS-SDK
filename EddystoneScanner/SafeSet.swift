@@ -67,6 +67,12 @@ extension SafeSet {
             }
         }
     }
+    
+    public func removeAll() {
+        queue.async(flags: .barrier) {
+            self.set.removeAll()
+        }
+    }
 }
 
 extension SafeSet {
