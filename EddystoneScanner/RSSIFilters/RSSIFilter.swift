@@ -15,6 +15,7 @@ import Foundation
 @objc public enum RSSIFilterType: Int {
     case kalman
     case arma
+    case runningAverage
 }
 
 ///

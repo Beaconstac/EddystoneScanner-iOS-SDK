@@ -29,7 +29,7 @@ internal class ArmaFilter: RSSIFilterDelegate {
     
     private let sArmaCoefficient: Float
     
-    required init(processNoise: Float, mesaurementNoise _: Float) {
+    internal required init(processNoise: Float, mesaurementNoise: Float) {
         sArmaCoefficient = processNoise
     }
     

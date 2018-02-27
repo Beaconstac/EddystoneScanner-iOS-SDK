@@ -24,4 +24,7 @@ internal class Constants {
     // Arma filter constants
     static let ARMA_FILTER_PROCESS_NOISE: Float = 0.15
     static let ARMA_FILTER_MEASUREMENT_NOISE: Float = -100
+    
+    // Running Average filter constants
+    static let RUNNING_AVERAGE_DEFAULT: Float = 0.0
 }

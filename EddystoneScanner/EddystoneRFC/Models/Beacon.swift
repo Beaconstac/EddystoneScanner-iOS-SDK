@@ -61,8 +61,10 @@ import CoreBluetooth
         
         if filterType == .arma {
             self.filter = ArmaFilter(processNoise: Constants.ARMA_FILTER_PROCESS_NOISE, mesaurementNoise:Constants.ARMA_FILTER_MEASUREMENT_NOISE)
-        } else {
+        } else if filterType == .kalman {
             self.filter = KalmanFilter(processNoise: Constants.KALMAN_FILTER_PROCESS_NOISE, mesaurementNoise:Constants.KALMAN_FILTER_MEASUREMENT_NOISE)
+        } else {
+            self.filter = RunningAverage(processNoise: Constants.RUNNING_AVERAGE_DEFAULT, mesaurementNoise: Constants.RUNNING_AVERAGE_DEFAULT)
         }
         
         super.init()

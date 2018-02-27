@@ -95,6 +95,14 @@ extension SafeSet {
         }
     }
     
+    public var endIndex: Set<E>.Index {
+        get {
+            return queue.sync {
+                return set.endIndex
+            }
+        }
+    }
+    
     // MARK: Immutable methods
     public func getSet() -> Set<E> {
         return queue.sync {
