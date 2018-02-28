@@ -46,7 +46,7 @@ internal class RunningAverageFilter: RSSIFilter {
     /// Filtered RSSI value
     internal var filteredRSSI: Int? {
         get {
-            guard measurements != nil, measurements.count > 0 else {
+            guard measurements.count > 0 else {
                 return nil
             }
             let size = measurements.count
@@ -67,19 +67,17 @@ internal class RunningAverageFilter: RSSIFilter {
         }
     }
     
-    internal var measurements: [Measurement]!
+    internal var measurements: [Measurement] = []
     
     internal init() {
         self.filterType = .runningAverage
     }
     
     internal func calculate(forRSSI rssi: Int) {
-        if measurements == nil {
-            measurements = []
-        }
+        
         let measurement = Measurement(rssi: rssi, timeStamp: Date().timeIntervalSince1970)
         measurements.append(measurement)
-        measurements = measurements?.filter({ ($0.timeStamp - Date().timeIntervalSince1970) < 20000 })
+        measurements = measurements.filter({ ($0.timeStamp - Date().timeIntervalSince1970) < 20000 })
         measurements.sort(by: { $0 > $1 })
     }
 }

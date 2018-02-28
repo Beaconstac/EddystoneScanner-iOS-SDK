@@ -32,7 +32,7 @@ internal class GaussianFilter: RSSIFilter {
     /// Filtered RSSI value
     var filteredRSSI: Int? {
         get {
-            guard recordedRSSI != nil, recordedRSSI.count > RECORDED_RSSI_COUNT else {
+            guard recordedRSSI.count > RECORDED_RSSI_COUNT else {
                 return nil
             }
             
@@ -69,7 +69,7 @@ internal class GaussianFilter: RSSIFilter {
             if meanCount > 0 {
                 mean /= meanCount
             } else {
-                mean = previousRSSI
+                mean = previousRSSI ?? 0
             }
             previousRSSI = mean + bias
             return previousRSSI
@@ -78,9 +78,9 @@ internal class GaussianFilter: RSSIFilter {
     
     private var bias: Int
     
-    private var recordedRSSI: [Int]!
+    private var recordedRSSI: [Int] = []
     
-    private var previousRSSI: Int!
+    private var previousRSSI: Int?
     
     internal init() {
         filterType = .gaussian
@@ -88,9 +88,6 @@ internal class GaussianFilter: RSSIFilter {
     }
     
     internal func calculate(forRSSI rssi: Int) {
-        if recordedRSSI == nil {
-            recordedRSSI = []
-        }
         if recordedRSSI.count > RECORDED_RSSI_COUNT {
             recordedRSSI.remove(at: 0)
         }
