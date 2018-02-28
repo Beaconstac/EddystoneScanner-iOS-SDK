@@ -13,7 +13,7 @@ import Foundation
 ///
 /// Implements the Kalman filter as described wonderfully by
 /// Wouter Bulten @ https://www.wouterbulten.nl/blog/tech/kalman-filters-explained-removing-noise-from-rssi-signals/
-internal class KalmanFilter: RSSIFilterDelegate {
+internal class KalmanFilter: RSSIFilter {
 
     /// Stores the filter type
     internal let filterType: RSSIFilterType = .kalman
@@ -41,12 +41,16 @@ internal class KalmanFilter: RSSIFilterDelegate {
     
     private var cov: Float = 0
     
+    /// Noise constants
+    private let KALMAN_FILTER_PROCESS_NOISE: Float = 0.008
+    private let KALMAN_FILTER_MEASUREMENT_NOISE: Float = 1.0
+    
     /**
      * Create 1-dimensional kalman filter
      */
-    internal required init(processNoise: Float, mesaurementNoise: Float) {
-        self.R = processNoise
-        self.Q = mesaurementNoise
+    internal init() {
+        self.R = KALMAN_FILTER_PROCESS_NOISE
+        self.Q = KALMAN_FILTER_MEASUREMENT_NOISE
         self.A = 1
         self.B = 0
         self.C = 1

@@ -15,6 +15,8 @@ import Foundation
 @objc public enum RSSIFilterType: Int {
     case kalman
     case arma
+    case gaussian
+    case runningAverage
 }
 
 ///
@@ -22,15 +24,12 @@ import Foundation
 ///
 /// RSSI signal filter protocol that all filters need to conform to
 ///
-internal protocol RSSIFilterDelegate {
+internal protocol RSSIFilter {
     /// Defines the filter type
     var filterType: RSSIFilterType { get }
     
     /// Filtered RSSI value
     var filteredRSSI: Int? { get }
-    
-    /// Required initialiser
-    init(processNoise: Float, mesaurementNoise: Float)
     
     /// Function to filter RSSI on current signal
     func calculate(forRSSI rssi: Int)

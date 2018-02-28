@@ -67,6 +67,12 @@ extension SafeSet {
             }
         }
     }
+    
+    public func removeAll() {
+        queue.async(flags: .barrier) {
+            self.set.removeAll()
+        }
+    }
 }
 
 extension SafeSet {
@@ -91,6 +97,14 @@ extension SafeSet {
         get {
             return queue.sync {
                 return set.startIndex
+            }
+        }
+    }
+    
+    public var endIndex: Set<E>.Index {
+        get {
+            return queue.sync {
+                return set.endIndex
             }
         }
     }

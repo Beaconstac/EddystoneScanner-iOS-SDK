@@ -16,12 +16,4 @@ import Foundation
 internal class Constants {
     static let BEACON_OPERATION_QUEUE_LABEL = "com.eddystonescanner.queue.blescanner"
     static let DISPATCH_TIMER_QUEUE_LABEL = "com.eddystonescanner.queue.dispatchtimer"
-    
-    // Kalman filter constants
-    static let KALMAN_FILTER_PROCESS_NOISE: Float = 0.008
-    static let KALMAN_FILTER_MEASUREMENT_NOISE: Float = 1.0
-    
-    // Arma filter constants
-    static let ARMA_FILTER_PROCESS_NOISE: Float = 0.15
-    static let ARMA_FILTER_MEASUREMENT_NOISE: Float = -100
 }
