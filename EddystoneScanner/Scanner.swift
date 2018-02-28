@@ -59,9 +59,16 @@ import CoreBluetooth
     /// Start scanning. If Core Bluetooth isn't ready for us just yet, then waits and THEN starts scanning
     ///
     @objc public func startScanning() {
-        self.beaconOperationsQueue.async { [weak self] in
-            self?.startScanningSynchronized()
-            self?.timer?.startTimer()
+        guard centralManager.state == .poweredOn else {
+            debugPrint("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
+            return
+        }
+        if !self.shouldBeScanning {
+            self.shouldBeScanning = true
+            self.beaconOperationsQueue.async { [weak self] in
+                self?.startScanningSynchronized()
+                self?.timer?.startTimer()
+            }
         }
     }
     
@@ -69,9 +76,12 @@ import CoreBluetooth
     /// Stops scanning for beacons
     ///
     @objc public func stopScanning() {
-        self.beaconOperationsQueue.async { [weak self] in
-            self?.centralManager.stopScan()
-            self?.timer?.stopTimer()
+        if self.shouldBeScanning {
+            self.shouldBeScanning = false
+            self.beaconOperationsQueue.async { [weak self] in
+                self?.centralManager.stopScan()
+                self?.timer?.stopTimer()
+            }
         }
     }
     
@@ -81,16 +91,10 @@ import CoreBluetooth
     /// Starts scanning for beacons
     ///
     private func startScanningSynchronized() {
-        if self.centralManager.state != .poweredOn {
-            debugPrint("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
-            self.shouldBeScanning = true
-        }
-        else {
-            debugPrint("Starting scan for Eddystone beacons")
-            let services = [CBUUID(string: "FEAA")]
-            let options = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
-            self.centralManager.scanForPeripherals(withServices: services, options: options)
-        }
+        debugPrint("Starting scan for Eddystone beacons")
+        let services = [CBUUID(string: "FEAA")]
+        let options = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
+        self.centralManager.scanForPeripherals(withServices: services, options: options)
     }
 }
 
@@ -98,17 +102,13 @@ extension Scanner: CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
-            if self.shouldBeScanning {
-                self.startScanningSynchronized()
-            }
+            self.startScanning()
         } else if central.state == .poweredOff {
-            if !self.shouldBeScanning {
-                self.stopScanning()
-                for beacon in self.nearbyBeacons.getSet() {
-                    self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
-                }
-                self.nearbyBeacons.removeAll()
+            self.stopScanning()
+            for beacon in self.nearbyBeacons.getSet() {
+                self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
             }
+            self.nearbyBeacons.removeAll()
         }
     }
     
