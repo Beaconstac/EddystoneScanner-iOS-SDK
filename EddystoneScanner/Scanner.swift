@@ -101,10 +101,7 @@ import CoreBluetooth
 extension Scanner: CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOn {
-            self.startScanning()
-        } else if central.state == .poweredOff {
-            self.stopScanning()
+        if central.state == .poweredOff {
             for beacon in self.nearbyBeacons.getSet() {
                 self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
             }
