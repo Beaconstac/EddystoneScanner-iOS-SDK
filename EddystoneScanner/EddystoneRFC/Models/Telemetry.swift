@@ -42,12 +42,20 @@ import Foundation
     
     /// Battery percentage
     /// Assume the chip requires a 3V battery. Most of the beacons have Nordic chips which support 3V
+    /// We aaume here that the lower bound is 2000 and upper bound is 3000
+    /// If the milliVolt is less than 2000, we assume 0% and if it is greater than 3000 we consider it as 100% charged.
+    /// The formula is % = (read milliVolt - LowerBound) / (UpperBound - LowerBound) * 100
     @objc public var batteryPercentage: UInt {
-        guard voltage != 0 else {
+        guard voltage > 2000 else {
             return 0
         }
         
-        return UInt((Float(voltage) / 3000.0) * 100)
+        guard voltage < 3000 else {
+            return 100
+        }
+        
+        let percentage: UInt = UInt(((Float(voltage) - 2000.0) / 1000.0) * 100.0)
+        return percentage > 100 ? 100 : percentage
     }
     
     internal init?(tlmFrameData: Data) {
