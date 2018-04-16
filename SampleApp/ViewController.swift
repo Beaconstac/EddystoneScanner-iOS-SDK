@@ -77,6 +77,9 @@ extension ViewController: ScannerDelegate {
     // MARK: EddystoneScannerDelegate callbacks
     func didFindBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
         beaconList.append(beacon)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     func didLoseBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
@@ -84,11 +87,17 @@ extension ViewController: ScannerDelegate {
             return
         }
         beaconList.remove(at: index)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     func didUpdateBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
         guard let index = beaconList.index(of: beacon) else {
             beaconList.append(beacon)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
             return
         }
         beaconList[index] = beacon
