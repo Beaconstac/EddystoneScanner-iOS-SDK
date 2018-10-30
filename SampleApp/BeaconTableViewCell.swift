@@ -63,10 +63,17 @@ class BeaconTableViewCell: UITableViewCell {
         setBatteryLevel(batteryLevel: batteryAmount)
         self.batteryView.backgroundColor = batteryColor(forGreenAmount: batteryAmount)
         
-        self.beaconMac.text = beacon.beaconID.instance.hexString.inserting(separator: ":", every: 2)
+        guard let instance = beacon.beaconID.instance, let namespace = beacon.beaconID.namespace else {
+            self.beaconMac.text = beacon.beaconID.description
+            self.beaconNamespace.text = "Namespace: Not found, maybe a EID frame"
+            self.beaconInstance.text = "Instance: Not found, maybe a EID frame"
+            return
+        }
         
-        self.beaconNamespace.text = "Namespace: \(beacon.beaconID.namespace.hexString)"
-        self.beaconInstance.text = "Instance: \(beacon.beaconID.instance.hexString)"
+        self.beaconMac.text = instance.hexString.inserting(separator: ":", every: 2)
+        
+        self.beaconNamespace.text = "Namespace: \(namespace.hexString)"
+        self.beaconInstance.text = "Instance: \(instance.hexString)"
         self.eddystoneURL.text = beacon.eddystoneURL?.absoluteString
         
         self.temperature.text = "NA"

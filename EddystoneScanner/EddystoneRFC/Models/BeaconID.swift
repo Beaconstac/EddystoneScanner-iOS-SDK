@@ -37,14 +37,20 @@ public enum BeaconType {
     ///
     /// 10 byte raw namespace data
     ///
-    @objc public var namespace: Array<UInt8> {
+    @objc public var namespace: Array<UInt8>? {
+        guard beaconID.count >= 10 else {
+            return nil
+        }
         return Array(beaconID[..<10])
     }
     
     ///
     /// 6 byte raw namespace data
     ///
-    @objc public var instance: Array<UInt8> {
+    @objc public var instance: Array<UInt8>? {
+        guard beaconID.count >= 16 else {
+            return nil
+        }
         return Array(beaconID[10..<16])
     }
     
