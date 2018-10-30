@@ -29,6 +29,9 @@ import CoreBluetooth
     /// Scanner Delegate
     @objc public var delegate: ScannerDelegate?
     
+    /// Namespace Filter
+    @objc public var namespaceFilter: String? = nil
+    
     /// Beacons that are close to the device.
     /// Keeps getting updated. Beacons are removed periodically when no packets are recieved in a 10 second interval
     public var nearbyBeacons = SafeSet<Beacon>(identifier: "nearbyBeacons")
@@ -150,6 +153,16 @@ extension Scanner: CBCentralManagerDelegate {
             return
         }
         
+        if let filter = namespaceFilter {
+            if let namespace = beacon.beaconID.namespace?.hexString {
+                if filter != namespace {
+                    return
+                }
+            } else {
+                return
+            }
+        }
+        
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
@@ -168,6 +181,16 @@ extension Scanner: CBCentralManagerDelegate {
                 return
             }
             
+            if let filter = namespaceFilter {
+                if let namespace = beacon.beaconID.namespace?.hexString {
+                    if filter != namespace {
+                        return
+                    }
+                } else {
+                    return
+                }
+            }
+
             self.nearbyBeacons.insert(beacon)
             self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
             return
@@ -199,6 +222,16 @@ extension Scanner: CBCentralManagerDelegate {
             return
         }
         
+        if let filter = namespaceFilter {
+            if let namespace = beacon.beaconID.namespace?.hexString {
+                if filter != namespace {
+                    return
+                }
+            } else {
+                return
+            }
+        }
+
         beacon.updateBeacon(telemetryData: nil, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         

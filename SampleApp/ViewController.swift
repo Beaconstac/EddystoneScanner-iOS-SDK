@@ -25,6 +25,7 @@ class ViewController: UIViewController {
         scanner.startScanning()
         scanner.delegate = self
         
+        self.tableView.tableFooterView = UIView(frame: .zero)
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
             // Enable or disable features based on authorization.
