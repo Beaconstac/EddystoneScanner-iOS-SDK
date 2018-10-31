@@ -153,16 +153,6 @@ extension Scanner: CBCentralManagerDelegate {
             return
         }
         
-        if let filter = namespaceFilter {
-            if let namespace = beacon.beaconID.namespace?.hexString {
-                if filter != namespace {
-                    return
-                }
-            } else {
-                return
-            }
-        }
-        
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
@@ -177,20 +167,10 @@ extension Scanner: CBCentralManagerDelegate {
         guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
             // Newly discovered beacon. Create a new beacon object
             let beaconServiceData = serviceData[Eddystone.ServiceUUID] as? Data
-            guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue, name: peripheral.name, filterType: rssiFilterType) else {
+            guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue, name: peripheral.name, namespaceFilter: namespaceFilter, filterType: rssiFilterType) else {
                 return
             }
             
-            if let filter = namespaceFilter {
-                if let namespace = beacon.beaconID.namespace?.hexString {
-                    if filter != namespace {
-                        return
-                    }
-                } else {
-                    return
-                }
-            }
-
             self.nearbyBeacons.insert(beacon)
             self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
             return
@@ -222,16 +202,6 @@ extension Scanner: CBCentralManagerDelegate {
             return
         }
         
-        if let filter = namespaceFilter {
-            if let namespace = beacon.beaconID.namespace?.hexString {
-                if filter != namespace {
-                    return
-                }
-            } else {
-                return
-            }
-        }
-
         beacon.updateBeacon(telemetryData: nil, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         

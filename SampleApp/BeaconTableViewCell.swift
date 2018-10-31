@@ -64,9 +64,15 @@ class BeaconTableViewCell: UITableViewCell {
         self.batteryView.backgroundColor = batteryColor(forGreenAmount: batteryAmount)
         
         guard let instance = beacon.beaconID.instance, let namespace = beacon.beaconID.namespace else {
+            guard let ephemeralIdentifier = beacon.beaconID.ephemeralIdentifier else {
+                self.beaconMac.text = "Instance | Namespace | Ephemeral Identifier not found"
+                self.beaconNamespace.text = "Instance | Namespace | Ephemeral Identifier not found"
+                self.beaconInstance.text = "Instance | Namespace | Ephemeral Identifier not found"
+                return
+            }
             self.beaconMac.text = beacon.beaconID.description
-            self.beaconNamespace.text = "Namespace: Not found, maybe a EID frame"
-            self.beaconInstance.text = "Instance: Not found, maybe a EID frame"
+            self.beaconNamespace.text = "Ephemeral Identifier: \(ephemeralIdentifier)"
+            self.beaconInstance.text = "Instance: Should be decoded"
             return
         }
         

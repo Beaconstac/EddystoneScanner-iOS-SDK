@@ -38,7 +38,7 @@ public enum BeaconType {
     /// 10 byte raw namespace data
     ///
     @objc public var namespace: Array<UInt8>? {
-        guard beaconID.count >= 10 else {
+        guard beaconType == .eddystone else {
             return nil
         }
         return Array(beaconID[..<10])
@@ -48,10 +48,20 @@ public enum BeaconType {
     /// 6 byte raw namespace data
     ///
     @objc public var instance: Array<UInt8>? {
-        guard beaconID.count >= 16 else {
+        guard beaconType == .eddystone else {
             return nil
         }
         return Array(beaconID[10..<16])
+    }
+    
+    ///
+    /// 8 byte raw Ephemeral Identifier
+    ///
+    @objc public var ephemeralIdentifier: Array<UInt8>? {
+        guard beaconType == .eddystoneEID else {
+            return nil
+        }
+        return Array(beaconID[..<8])
     }
     
     ///
