@@ -63,6 +63,7 @@ import CoreBluetooth
     ///
     @objc public func startScanning() {
         guard centralManager.state == .poweredOn else {
+            self.shouldBeScanning = true
             debugPrint("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
             return
         }
