@@ -105,7 +105,6 @@ extension Scanner: CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOff {
-            stopScanning()
             for beacon in self.nearbyBeacons.getSet() {
                 self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
             }
