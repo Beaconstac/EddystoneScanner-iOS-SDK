@@ -105,10 +105,17 @@ extension Scanner: CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOff {
+            stopScanning()
             for beacon in self.nearbyBeacons.getSet() {
                 self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
             }
             self.nearbyBeacons.removeAll()
+        } else if central.state == .poweredOn {
+            // CoreBluetooth ready now, resume scanning if the user wants it
+            if shouldBeScanning && !central.isScanning {
+                shouldBeScanning = false
+                startScanning()
+            }
         }
     }
     
