@@ -63,16 +63,14 @@ import CoreBluetooth
     ///
     @objc public func startScanning() {
         guard centralManager.state == .poweredOn else {
-            self.shouldBeScanning = true
-            debugPrint("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
+            shouldBeScanning = true
+            debugPrint("CentralManager state is %d, cannot start scan", centralManager.state.rawValue)
             return
         }
-        if !self.shouldBeScanning {
-            self.shouldBeScanning = true
-            self.beaconOperationsQueue.async { [weak self] in
-                self?.startScanningSynchronized()
-                self?.timer?.startTimer()
-            }
+        if !shouldBeScanning {
+            shouldBeScanning = true
+            startScanningSynchronized()
+            timer?.startTimer()
         }
     }
     
@@ -80,12 +78,14 @@ import CoreBluetooth
     /// Stops scanning for beacons
     ///
     @objc public func stopScanning() {
-        if self.shouldBeScanning {
-            self.shouldBeScanning = false
-            self.beaconOperationsQueue.async { [weak self] in
-                self?.centralManager.stopScan()
-                self?.timer?.stopTimer()
+        if shouldBeScanning {
+            shouldBeScanning = false
+            centralManager.stopScan()
+            timer?.stopTimer()
+            for beacon in nearbyBeacons.getSet() {
+                delegate?.didLoseBeacon(scanner: self, beacon: beacon)
             }
+            nearbyBeacons.removeAll()
         }
     }
     
@@ -106,10 +106,7 @@ extension Scanner: CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOff {
-            for beacon in self.nearbyBeacons.getSet() {
-                self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
-            }
-            self.nearbyBeacons.removeAll()
+            stopScanning()
         } else if central.state == .poweredOn {
             // CoreBluetooth ready now, resume scanning if the user wants it
             if shouldBeScanning && !central.isScanning {
