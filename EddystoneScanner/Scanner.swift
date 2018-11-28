@@ -82,10 +82,12 @@ import CoreBluetooth
             shouldBeScanning = false
             centralManager.stopScan()
             timer?.stopTimer()
-            for beacon in nearbyBeacons.getSet() {
-                delegate?.didLoseBeacon(scanner: self, beacon: beacon)
+            DispatchQueue.main.async {
+                for beacon in self.nearbyBeacons.getSet() {
+                    self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
+                }
+                self.nearbyBeacons.removeAll()
             }
-            nearbyBeacons.removeAll()
         }
     }
     
@@ -160,7 +162,9 @@ extension Scanner: CBCentralManagerDelegate {
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
-        self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
+        DispatchQueue.main.async {
+            self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
+        }
     }
     
     /// Handle EID UID frame
@@ -176,7 +180,9 @@ extension Scanner: CBCentralManagerDelegate {
             }
             
             self.nearbyBeacons.insert(beacon)
-            self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
+            DispatchQueue.main.async {
+                self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
+            }
             return
         }
         
@@ -188,7 +194,9 @@ extension Scanner: CBCentralManagerDelegate {
         beacon.updateBeacon(telemetryData: nil, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
-        self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
+        DispatchQueue.main.async {
+            self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
+        }
     }
     
     /// Handle URL frame
@@ -209,7 +217,9 @@ extension Scanner: CBCentralManagerDelegate {
         beacon.updateBeacon(telemetryData: nil, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
-        self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
+        DispatchQueue.main.async {
+            self.delegate?.didUpdateBeacon(scanner: self, beacon: beacon)
+        }
     }
     
 }
@@ -220,7 +230,9 @@ extension Scanner: DispatchTimerDelegate {
         // Loop through the beacon list and find which beacon has not been seen in the last 15 seconds
         self.nearbyBeacons.filterInPlace() { beacon in
             if Date().timeIntervalSince1970 - beacon.lastSeen.timeIntervalSince1970 > 15  {
-                self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
+                DispatchQueue.main.async {
+                    self.delegate?.didLoseBeacon(scanner: self, beacon: beacon)
+                }
                 return false
             }
             return true
