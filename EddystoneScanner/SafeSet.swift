@@ -73,6 +73,20 @@ extension SafeSet {
             self.set.removeAll()
         }
     }
+    
+    public func subtract(_ other: SafeSet<E>) {
+        queue.async(flags: .barrier) {
+            self.set = self.set.subtracting(other.set)
+        }
+    }
+    
+    public func union(_ safeSet: SafeSet<E>) {
+        queue.async(flags: .barrier) {
+            for element in safeSet.getSet() {
+                self.set.insert(element)
+            }
+        }
+    }
 }
 
 extension SafeSet {
