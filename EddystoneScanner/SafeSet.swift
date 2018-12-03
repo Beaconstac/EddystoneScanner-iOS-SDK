@@ -18,9 +18,11 @@ import Foundation
 public class SafeSet<E: Hashable> {
     private let queue: DispatchQueue
     private var set: Set<E> = []
-    
+    var index: Set<E>.Index
+
     public init(identifier: String) {
         queue = DispatchQueue(label: "com.safeset.\(Date().timeIntervalSince1970).\(identifier)", attributes: .concurrent)
+        index = set.startIndex
     }
     
     public subscript(index: Set<E>.Index) -> E? {
@@ -85,6 +87,20 @@ extension SafeSet {
             for element in safeSet.getSet() {
                 self.set.insert(element)
             }
+        }
+    }
+}
+
+extension SafeSet: Sequence {
+    public func makeIterator() -> AnyIterator<E> {
+        var index = 0
+        return AnyIterator {
+            let setIndex = self.index(self.startIndex, offsetBy: index)
+            guard let element = self[setIndex] else {
+                return nil
+            }
+            index += 1
+            return element
         }
     }
 }
