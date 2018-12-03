@@ -95,7 +95,7 @@ extension SafeSet: Sequence {
     public func makeIterator() -> AnyIterator<E> {
         var index = 0
         return AnyIterator {
-            let setIndex = self.index(self.startIndex, offsetBy: index)
+            let setIndex = self.set.index(self.set.startIndex, offsetBy: index)
             guard let element = self[setIndex] else {
                 return nil
             }
