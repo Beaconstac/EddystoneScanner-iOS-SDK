@@ -8,6 +8,12 @@
 
 import CoreBluetooth
 
+@objc public enum State: Int {
+    case unknown
+    case off
+    case on
+}
+
 ///
 /// ScannerDelegate
 ///
@@ -16,6 +22,7 @@ import CoreBluetooth
     @objc func didFindBeacon(scanner: Scanner, beacon: Beacon)
     @objc func didLoseBeacon(scanner: Scanner, beacon: Beacon)
     @objc func didUpdateBeacon(scanner: Scanner, beacon: Beacon)
+    @objc func didUpdateScannerState(scanner: Scanner, state: State)
 }
 
 ///
@@ -107,15 +114,18 @@ import CoreBluetooth
 extension Scanner: CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate callbacks
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOff {
-            stopScanning()
-        } else if central.state == .poweredOn {
-            // CoreBluetooth ready now, resume scanning if the user wants it
-            if shouldBeScanning && !central.isScanning {
-                shouldBeScanning = false
-                startScanning()
-            }
+        var state = State.unknown
+        switch central.state {
+        case .poweredOff:
+            state = .off
+        case .poweredOn:
+            state = .on
+        case .unauthorized:
+            state = .off
+        default:
+            state = .unknown
         }
+        self.delegate?.didUpdateScannerState(scanner: self, state: state)
     }
     
     public func centralManager(_ central: CBCentralManager,
