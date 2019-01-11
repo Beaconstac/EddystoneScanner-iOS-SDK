@@ -75,6 +75,11 @@ extension ViewController: UITableViewDataSource {
 }
 
 extension ViewController: ScannerDelegate {
+    
+    func didUpdateScannerState(scanner: EddystoneScanner.Scanner, state: State) {
+        print(state)
+    }
+    
     // MARK: EddystoneScannerDelegate callbacks
     func didFindBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
         beaconList.append(beacon)
