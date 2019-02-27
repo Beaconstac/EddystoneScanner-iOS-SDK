@@ -118,13 +118,13 @@ extension Scanner: CBCentralManagerDelegate {
         switch central.state {
         case .poweredOff:
             state = .off
+        case .poweredOn:
+            state = .on
             // Handle state changes and user requirement
             if shouldBeScanning && !central.isScanning {
                 shouldBeScanning = false
                 startScanning()
             }
-        case .poweredOn:
-            state = .on
         case .unauthorized:
             state = .off
         default:
