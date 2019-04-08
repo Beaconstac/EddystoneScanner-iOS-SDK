@@ -95,10 +95,10 @@ extension SafeSet: Sequence {
     public func makeIterator() -> AnyIterator<E> {
         var index = 0
         return AnyIterator {
-            guard let setIndex = self.set.index(self.set.startIndex, offsetBy: index, limitedBy: self.set.endIndex),
-                let element = self[setIndex] else {
+            guard let setIndex = self.index(self.startIndex, offsetBy: index) else {
                 return nil
             }
+            let element = self.set[setIndex]
             index += 1
             return element
         }
@@ -154,19 +154,23 @@ extension SafeSet {
     
     public func index(of member: E) -> Set<E>.Index? {
         return queue.sync {
-            return set.index(of: member)
+            return set.firstIndex(of: member)
         }
     }
     
     public func index(where predicate: (E) throws -> Bool) rethrows -> Set<E>.Index? {
         return try queue.sync {
-            return try self.set.index(where: predicate)
+            return try self.set.firstIndex(where: predicate)
         }
     }
     
-    public func index(_ i: Set<E>.Index, offsetBy offset: Int) -> Set<E>.Index {
+    public func index(_ i: Set<E>.Index, offsetBy offset: Int) -> Set<E>.Index? {
         return queue.sync {
-            return self.set.index(i, offsetBy: offset)
+            guard let setIndex = self.set.index(self.set.startIndex, offsetBy: offset, limitedBy: self.set.endIndex),
+                setIndex < self.set.endIndex else {
+                return nil
+            }
+            return setIndex
         }
     }
 }

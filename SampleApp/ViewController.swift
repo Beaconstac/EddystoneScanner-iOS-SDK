@@ -89,7 +89,7 @@ extension ViewController: ScannerDelegate {
     }
     
     func didLoseBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
-        guard let index = beaconList.index(of: beacon) else {
+        guard let index = beaconList.firstIndex(of: beacon) else {
             return
         }
         beaconList.remove(at: index)
@@ -99,7 +99,7 @@ extension ViewController: ScannerDelegate {
     }
     
     func didUpdateBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
-        guard let index = beaconList.index(of: beacon) else {
+        guard let index = beaconList.firstIndex(of: beacon) else {
             beaconList.append(beacon)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
