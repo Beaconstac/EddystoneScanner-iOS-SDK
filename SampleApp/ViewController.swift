@@ -31,32 +31,6 @@ class ViewController: UIViewController {
             // Enable or disable features based on authorization.
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTableView), userInfo: nil, repeats: true)
-    }
-    
-    @objc func updateTableView() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        timer?.invalidate()
-        timer = nil
-    }
-
-
 }
 
 extension ViewController: UITableViewDataSource {
@@ -82,30 +56,30 @@ extension ViewController: ScannerDelegate {
     
     // MARK: EddystoneScannerDelegate callbacks
     func didFindBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
-        beaconList.append(beacon)
         DispatchQueue.main.async {
+            self.beaconList.append(beacon)
             self.tableView.reloadData()
         }
     }
     
     func didLoseBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
-        guard let index = beaconList.firstIndex(of: beacon) else {
-            return
-        }
-        beaconList.remove(at: index)
         DispatchQueue.main.async {
+            guard let index = self.beaconList.firstIndex(of: beacon) else {
+                return
+            }
+            self.beaconList.remove(at: index)
             self.tableView.reloadData()
         }
     }
     
     func didUpdateBeacon(scanner: EddystoneScanner.Scanner, beacon: Beacon) {
-        guard let index = beaconList.firstIndex(of: beacon) else {
-            beaconList.append(beacon)
-            DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            guard let index = self.beaconList.firstIndex(of: beacon) else {
+                self.beaconList.append(beacon)
                 self.tableView.reloadData()
+                return
             }
-            return
+            self.beaconList[index] = beacon
         }
-        beaconList[index] = beacon
     }
 }
