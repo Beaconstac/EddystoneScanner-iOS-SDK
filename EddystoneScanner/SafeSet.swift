@@ -92,16 +92,8 @@ extension SafeSet {
 }
 
 extension SafeSet: Sequence {
-    public func makeIterator() -> AnyIterator<E> {
-        var index = 0
-        return AnyIterator {
-            guard let setIndex = self.index(self.startIndex, offsetBy: index) else {
-                return nil
-            }
-            let element = self.set[setIndex]
-            index += 1
-            return element
-        }
+    public func makeIterator() -> SafeSetIterator<E> {
+        return SafeSetIterator(Array(self.set))
     }
 }
 
@@ -174,3 +166,32 @@ extension SafeSet {
         }
     }
 }
+
+public struct SafeSetIterator<E: Hashable>: IteratorProtocol {
+    
+    private let values: [E]
+    private var index: Int?
+    
+    init(_ values: [E]) {
+        self.values = values
+    }
+    
+    private func nextIndex(for index: Int?) -> Int? {
+        if let index = index, index < self.values.count - 1 {
+            return index + 1
+        }
+        if index == nil, !self.values.isEmpty {
+            return 0
+        }
+        return nil
+    }
+    
+    mutating public func next() -> E? {
+        if let index = self.nextIndex(for: self.index) {
+            self.index = index
+            return self.values[index]
+        }
+        return nil
+    }
+}
+
