@@ -164,16 +164,12 @@ extension Scanner: CBCentralManagerDelegate {
                                      serviceData: [NSObject: AnyObject],
                                      RSSI: NSNumber) {
         
-        guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
+        guard let beacon = nearbyBeacons.first(where: {$0.identifier == peripheral.identifier}) else {
             return
         }
         
         // Save the changing beacon data into the beacon object
         let telemetryData = Eddystone.telemetryDataForFrame(advertisementFrameList: serviceData)
-        guard let beacon = self.nearbyBeacons[index] else {
-            return
-        }
-        
         beacon.updateBeacon(telemetryData: telemetryData, eddystoneURL: nil, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         
@@ -185,7 +181,7 @@ extension Scanner: CBCentralManagerDelegate {
                                       serviceData: [NSObject: AnyObject],
                                       RSSI: NSNumber) {
         
-        guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
+        guard let beacon = nearbyBeacons.first(where: {$0.identifier == peripheral.identifier}) else {
             // Newly discovered beacon. Create a new beacon object
             let beaconServiceData = serviceData[Eddystone.ServiceUUID] as? Data
             guard let beacon = Beacon(identifier: peripheral.identifier, frameData: beaconServiceData, rssi: RSSI.intValue, name: peripheral.name, namespaceFilter: namespaceFilter, filterType: rssiFilterType) else {
@@ -194,11 +190,6 @@ extension Scanner: CBCentralManagerDelegate {
             
             self.nearbyBeacons.insert(beacon)
             self.delegate?.didFindBeacon(scanner: self, beacon: beacon)
-            return
-        }
-        
-        // Beacon already discovered. Update rssi and last seen value of the beacon
-        guard let beacon = self.nearbyBeacons[index] else {
             return
         }
         
@@ -213,16 +204,10 @@ extension Scanner: CBCentralManagerDelegate {
                                    serviceData: [NSObject: AnyObject],
                                    RSSI: NSNumber) {
         
+        guard let beacon = nearbyBeacons.first(where: {$0.identifier == peripheral.identifier}) else {
+            return
+        }
         let eddystoneURL = Eddystone.parseURLFromFrame(advertisementFrameList: serviceData)
-        guard let index = nearbyBeacons.index(where: {$0.identifier == peripheral.identifier}) else {
-            return
-        }
-        
-        // Update the beacon object
-        guard let beacon = self.nearbyBeacons[index] else {
-            return
-        }
-        
         beacon.updateBeacon(telemetryData: nil, eddystoneURL: eddystoneURL, rssi: RSSI.intValue)
         self.nearbyBeacons.update(with: beacon)
         

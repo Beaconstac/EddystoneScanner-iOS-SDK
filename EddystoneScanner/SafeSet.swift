@@ -19,7 +19,7 @@ public class SafeSet<E: Hashable> {
     private let queue: DispatchQueue
     private var set: Set<E> = []
     var index: Set<E>.Index
-
+    
     public init(identifier: String) {
         queue = DispatchQueue(label: "com.safeset.\(Date().timeIntervalSince1970).\(identifier)", attributes: .concurrent)
         index = set.startIndex
@@ -28,7 +28,7 @@ public class SafeSet<E: Hashable> {
     public subscript(index: Set<E>.Index) -> E? {
         get {
             return queue.sync {
-                guard set.indices.contains(index) else {
+                guard index < set.endIndex else {
                     return nil
                 }
                 return set[index]
@@ -150,19 +150,9 @@ extension SafeSet {
         }
     }
     
-    public func index(where predicate: (E) throws -> Bool) rethrows -> Set<E>.Index? {
+    public func first(where predicate: (E) throws -> Bool) rethrows -> E? {
         return try queue.sync {
-            return try self.set.firstIndex(where: predicate)
-        }
-    }
-    
-    public func index(_ i: Set<E>.Index, offsetBy offset: Int) -> Set<E>.Index? {
-        return queue.sync {
-            guard let setIndex = self.set.index(self.set.startIndex, offsetBy: offset, limitedBy: self.set.endIndex),
-                setIndex < self.set.endIndex else {
-                return nil
-            }
-            return setIndex
+            return try set.first(where: predicate)
         }
     }
 }
@@ -194,4 +184,3 @@ public struct SafeSetIterator<E: Hashable>: IteratorProtocol {
         return nil
     }
 }
-
