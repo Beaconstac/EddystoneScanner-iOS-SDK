@@ -49,7 +49,7 @@ public class DispatchTimer: NSObject {
             return
         }
         isTimerRunning = true
-        sourceTimer?.schedule(deadline: .now(), repeating: repeatingInterval, leeway: .seconds(10))
+        sourceTimer?.schedule(deadline: .now() + repeatingInterval, repeating: repeatingInterval, leeway: .seconds(10))
         sourceTimer?.setEventHandler { [weak self] in
             self?.delegate?.timerCalled(timer: self)
         }
