@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'EddystoneScanner'
-  s.version          = '1.2.9'
+  s.version          = '1.2.10'
   s.swift_version    = '5.0'
   s.summary          = 'Eddystone scanner framework for iOS written in swift.'
 
