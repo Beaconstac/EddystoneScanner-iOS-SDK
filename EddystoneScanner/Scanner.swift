@@ -53,11 +53,16 @@ import CoreBluetooth
     /// Timer to remove beacons not in the the apps proximity
     private var timer: DispatchTimer?
     
+    private var state: State = .unknown {
+        willSet {
+            delegate?.didUpdateScannerState(scanner: self, state: newValue)
+        }
+    }
+    
     // MARK: Public functions
     /// Initialises the CBCentralManager for scanning and the DispatchTimer
     public init(rssiFilterType: RSSIFilterType = .arma) {
         self.rssiFilterType = rssiFilterType
-        
         super.init()
         
         self.centralManager = CBCentralManager(delegate: self, queue: self.beaconOperationsQueue)
@@ -70,12 +75,14 @@ import CoreBluetooth
     ///
     @objc public func startScanning() {
         guard centralManager.state == .poweredOn else {
+            state = .off
             shouldBeScanning = true
             debugPrint("CentralManager state is %d, cannot start scan", centralManager.state.rawValue)
             return
         }
         if !shouldBeScanning {
             shouldBeScanning = true
+            state = .on
             startScanningSynchronized()
             timer?.startTimer()
         }
