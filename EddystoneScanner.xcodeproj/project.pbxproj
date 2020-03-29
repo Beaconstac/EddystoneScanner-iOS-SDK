@@ -505,7 +505,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				"OTHER_CFLAGS[arch=*]" = "-fembed-bitcode-marker";
+				"OTHER_CFLAGS[arch=*]" = "-fembed-bitcode";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
