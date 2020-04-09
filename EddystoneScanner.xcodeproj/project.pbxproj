@@ -455,6 +455,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BITCODE_GENERATION_MODE = "";
 				"BITCODE_GENERATION_MODE[arch=*]" = bitcode;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -522,6 +523,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BITCODE_GENERATION_MODE = "";
 				"BITCODE_GENERATION_MODE[arch=*]" = bitcode;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -593,6 +595,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 1.2.13;
 				"OTHER_CFLAGS[arch=*]" = "-fembed-bitcode-marker";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mobstac.EddystoneScanner;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -620,6 +623,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 1.2.13;
 				"OTHER_CFLAGS[arch=*]" = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mobstac.EddystoneScanner;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
