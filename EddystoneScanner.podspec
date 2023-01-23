@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'EddystoneScanner'
-  s.version          = '1.2.13'
+  s.version          = '1.2.14'
   s.swift_version    = '5.0'
   s.summary          = 'Eddystone scanner framework for iOS written in swift.'
 
@@ -15,7 +15,7 @@ Framework to scan for eddystone compliant beacons build on Swift for iOS.
 
   s.frameworks       = 'Foundation', 'CoreBluetooth'
   s.requires_arc     = true
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '11.0'
 
   s.source_files = 'EddystoneScanner/*.swift', 'EddystoneScanner/**/*.swift'
 end
